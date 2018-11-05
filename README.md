@@ -1,4 +1,4 @@
-# teakozi-facilitator
+# teakozi-editor
 
 ## Project setup
 ```
