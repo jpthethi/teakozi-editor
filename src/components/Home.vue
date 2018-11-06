@@ -79,13 +79,13 @@
                       <div class="form-group row">
                         <label for="" class="col-2 col-form-label">{{stepTypeKey}}</label>
                         <div class="col-10">
-                          <template v-for="(headerKey, headerVal) in stepTypeVal">
+                          <template v-for="(headerVal, headerKey ) in stepTypeVal">
                             <div class="form-group row" :key="headerKey">
                               <div class="col-5">
-                                <input class="form-control" placeholder="Authorization" :value="headerVal" @focusout="addHeaderKey(step, stepIndex, $event.target.value)">
+                                <input class="form-control" placeholder="Authorization" :value="headerKey" @focusout="addHeaderKey(step, stepIndex, $event.target.value)">
                               </div>
                               <div class="col-5">
-                                <input class="form-control" placeholder="Basic ***" :value="headerKey">
+                                <input class="form-control" placeholder="Basic ***" v-model="step[step.type].headers[headerKey]" @focusout="$forceUpdate()">
                               </div>
                               <div class="col-2">
                                 <button type="button" class="btn btn-warning btn-xs pull-right" @click="removeHeader(step, stepIndex, headerKey)" title="Remove Header">-</button>
@@ -101,19 +101,19 @@
                         <label class="col-2 col-form-label">{{stepTypeKey}}</label>
                         <div class="col-10">
                           <template v-for="(overrideVal, overrideKey) in stepTypeVal">
-                            <div class="form-group row">
+                            <div class="form-group row" :key="overrideKey">
                               <div class="col-5">
-                                <input class="form-control" placeholder="$.body" :value="overrideKey">
+                                <input class="form-control" placeholder="$.body" :value="overrideKey" @focusout="addOverrideKey(step, stepIndex, $event.target.value)">
                               </div>
                               <div class="col-5">
-                                <input class="form-control" placeholder="~comment_text~" :value="overrideVal">
+                                <input class="form-control" placeholder="~comment_text~" v-model="step[step.type].override[overrideKey]" @focusout="$forceUpdate()">
                               </div>
                               <div class="col-2">
                                 <button type="button" class="btn btn-warning btn-xs pull-right" @click="removeOverride(step, overrideKey)" title="Remove Header">-</button>
                               </div>
                             </div>
                           </template>
-                          <button type="button" title="Add Header" class="btn btn-primary btn-xs" @click="addOverride(step, stepIndex)">+</button>
+                          <button type="button" title="Add Header" class="btn btn-info btn-xs" @click="addOverride(step, stepIndex)">+</button>
                         </div>
                       </div>
                     </template>
@@ -196,10 +196,10 @@
                                     <template v-for="(checkBodyEqVal, checkBodyEqKey) in checkBodyVal">
                                       <div class="form-group row">
                                         <div class="col-5">
-                                          <input class="form-control" v-model="checkBodyEqKey">
+                                          <input class="form-control" :value="checkBodyEqKey" @focusout="addEqualCheckKey(stepIndex, $event.target.value)">
                                         </div>
                                         <div class="col-5">
-                                          <input class="form-control" v-model="step.check.body.eq[checkBodyEqKey]">
+                                          <input class="form-control" v-model="step.check.body.eq[checkBodyEqKey]" @focusout="$forceUpdate()">
                                         </div>
                                         <div class="col-2">
                                           <button class="btn btn-warning pull-right" title="Remove Eq check" type="button" @click="removeEqualCheck(stepIndex, checkBodyEqKey)">-</button>
@@ -217,10 +217,10 @@
                                     <template v-for="(checkBodyNeqVal, checkBodyNeqKey) in checkBodyVal">
                                       <div class="form-group row">
                                         <div class="col-5">
-                                          <input class="form-control" v-model="checkBodyNeqKey">
+                                          <input class="form-control" :value="checkBodyNeqKey" @focusout="addNequalCheckKey(stepIndex, $event.target.value)">
                                         </div>
                                         <div class="col-5">
-                                          <input class="form-control" v-model="step.check.body.eq[checkBodyNeqKey]">
+                                          <input class="form-control" v-model="step.check.body.neq[checkBodyNeqKey]" @focusout="$forceUpdate()">
                                         </div>
                                         <div class="col-2">
                                           <button class="btn btn-warning pull-right" title="Remove Neq Check" type="button" @click="removeNequalCheck(stepIndex, checkBodyNeqKey)">-</button>
@@ -238,7 +238,7 @@
                                     <template v-for="(nullVal, nullIndex) in checkBodyVal">
                                       <div class="form-group row">
                                         <div class="col-10">
-                                          <input class="form-control" :value="nullVal">
+                                          <input class="form-control" v-model="step.check.body.null[nullIndex]">
                                         </div>
                                         <div class="col-2">
                                           <button type="button" class="btn btn-warning pull-right" @click="removeNull(stepIndex, nullIndex)">-</button>
@@ -256,10 +256,10 @@
                                     <template v-for="(checkBodyDeepEqVal, checkBodyDeepEqKey) in checkBodyVal">
                                       <div class="form-group row">
                                         <div class="col-5">
-                                          <input class="form-control" v-model="checkBodyDeepEqKey">
+                                          <input class="form-control" :value="checkBodyDeepEqKey" @focusout="addDeepEqCheckKey(stepIndex, $event.target.value)">
                                         </div>
                                         <div class="col-5">
-                                          <input class="form-control" v-model="step.check.body.eq[checkBodyDeepEqKey]">
+                                          <input class="form-control" v-model="step.check.body.deepEqual[checkBodyDeepEqKey]" @focusout="$forceUpdate()">
                                         </div>
                                         <div class="col-2">
                                           <button class="btn btn-warning pull-right" title="Remove Deep Equal Check" type="button" @click="removeDeepEqCheck(stepIndex, checkBodyDeepEqKey)">-</button>
@@ -277,10 +277,10 @@
                                     <template v-for="(checkBodyRegexVal, checkBodyRegexKey) in checkBodyVal">
                                       <div class="form-group row">
                                         <div class="col-5">
-                                          <input class="form-control" v-model="checkBodyRegexKey">
+                                          <input class="form-control" :value="checkBodyRegexKey" @focusout="addRegexCheckKey(stepIndex, $event.target.value)">
                                         </div>
                                         <div class="col-5">
-                                          <input class="form-control" v-model="step.check.body.eq[checkBodyRegexKey]">
+                                          <input class="form-control" v-model="step.check.body.regex[checkBodyRegexKey]" @focusout="$forceUpdate()">
                                         </div>
                                         <div class="col-2">
                                           <button class="btn btn-warning pull-right" title="Remove Regex Check" type="button" @click="removeRegexCheck(stepIndex, checkBodyRegexKey)">-</button>
@@ -301,22 +301,22 @@
                 </template>
                 <template v-if="stepKey == 'collect'">
                   <div class="form-group row">
-                    <label class="col-2 col-form-label">Collect</label>
+                    <label class="col-2 col-form-label">{{stepKey}}</label>
                     <div class="col-10">
-                      <template v-for="(collectVal, collectKey) in step.collect">
+                      <template v-for="(collectVal, collectKey) in stepVal">
                         <div class="form-group row">
                           <div class="col-5">
-                            <input class="form-control" v-model="collectKey">
+                            <input class="form-control" :value="collectKey" @focusout="addCollectKey(step, stepIndex, $event.target.value)" placeholder="gist_id">
                           </div>
                           <div class="col-5">
-                            <input class="form-control" v-model="step.collect[collectKey]">
+                            <input class="form-control" v-model="step.collect[collectKey]" placeholder="$.id" @focusout="$forceUpdate()">
                           </div>
                           <div class="col-2">
-                            <button class="btn btn-warning pull-right" title="Remove Collect" type="button" @click="removeCollect(stepIndex, collectKey)">-</button>
+                            <button class="btn btn-warning pull-right" title="Remove Collect" type="button" @click="removeCollect(step, stepIndex, collectKey)">-</button>
                           </div>
                         </div>
                       </template>
-                      <button class="btn btn-info" title="Add Collect" type="button" @click="addCollect(stepIndex)">+</button>
+                      <button class="btn btn-info" title="Add Collect" type="button" @click="addCollect(step, stepIndex)">+</button>
                     </div>
                   </div>
                 </template>
@@ -346,15 +346,58 @@ var tests;
 var getAndDeleteObj;
 var postAndPutObj;
 var localObj;
+var checkObj;
 const YAML = require("js-yaml");
+const JP = require("jsonpath");
 export default {
   data: function() {
     return {
       tests: tests
     };
   },
+  beforeCreate(){
+      let jpTest = {
+        store: {
+          book: [
+            {
+              category: "reference",
+              author: "Nigel Rees",
+              title: "Sayings of the Century",
+              price: 8.95
+            },
+            {
+              category: "fiction",
+              author: "Evelyn Waugh",
+              title: "Sword of Honour",
+              price: 12.99
+            },
+            {
+              category: "fiction",
+              author: "Herman Melville",
+              title: "Moby Dick",
+              isbn: "0-553-21311-3",
+              price: 8.99
+            },
+            {
+              category: "fiction",
+              author: "J. R. R. Tolkien",
+              title: "The Lord of the Rings",
+              isbn: "0-395-19395-8",
+              price: 22.99
+            }
+          ],
+          bicycle: {
+            color: "red",
+            price: 19.95
+          }
+        }
+      };
+      console.log(JSON.stringify(JP.query(jpTest, "$..price")));
+      console.log(JSON.stringify(JP.paths(jpTest, "$..price")))
+  },
   updated() {
     //console.log("updated");
+    console.log("steps :::: ", JSON.stringify(this.tests.steps));
   },
   methods: {
     addStep() {
@@ -364,8 +407,15 @@ export default {
       this.tests.steps.splice(stepIndex, 1);
     },
     stepTypeChanged(step, stepIndex) {
-      if (step.type == "get" || step.type == "delete") this.tests.steps[stepIndex][step.type] = getAndDeleteObj;
-      else if(step.type == "post" || step.type == "put") this.tests.steps[stepIndex][step.type] = postAndPutObj;
+      delete this.tests.steps[stepIndex].get;
+      delete this.tests.steps[stepIndex].post;
+      delete this.tests.steps[stepIndex].put;
+      delete this.tests.steps[stepIndex].delete;
+
+      if (step.type == "get" || step.type == "delete")
+        this.tests.steps[stepIndex][step.type] = getAndDeleteObj;
+      else if (step.type == "post" || step.type == "put")
+        this.tests.steps[stepIndex][step.type] = postAndPutObj;
       else this.tests.steps[stepIndex][step.type] = localObj;
     },
     addHeader(step, stepIndex) {
@@ -379,23 +429,27 @@ export default {
       this.$forceUpdate();
     },
     addHeaderKey(step, stepIndex, key) {
-      if (key) {
+      if (this.tests.steps[stepIndex][step.type].headers[key] == undefined) {
         delete this.tests.steps[stepIndex][step.type].headers[""];
         this.tests.steps[stepIndex][step.type].headers[key] = "";
-        console.log(
-          "======== ",
-          this.tests.steps[stepIndex][step.type].headers
-        );
       }
+      this.$forceUpdate();
     },
     addOverride(step, stepIndex) {
-      if (this.tests.steps[stepIndex].override[""] == undefined) {
-        this.tests.steps[stepIndex].override[""] = "";
+      if (this.tests.steps[stepIndex][step.type].override[""] == undefined) {
+        this.tests.steps[stepIndex][step.type].override[""] = "";
         this.$forceUpdate();
       }
     },
     removeOverride(step, overrideKey) {
       delete step[step.type].override[overrideKey];
+      this.$forceUpdate();
+    },
+    addOverrideKey(step, stepIndex, key) {
+      if (this.tests.steps[stepIndex][step.type].override[key] == undefined) {
+        delete this.tests.steps[stepIndex][step.type].override[""];
+        this.tests.steps[stepIndex][step.type].override[key] = "";
+      }
       this.$forceUpdate();
     },
     removePrint(stepIndex, printIndex) {
@@ -404,14 +458,21 @@ export default {
     addPrint(stepIndex) {
       this.tests.steps[stepIndex].print.push("");
     },
-    addCollect(stepIndex) {
+    addCollect(step, stepIndex) {
       if (this.tests.steps[stepIndex].collect[""] == undefined) {
         this.tests.steps[stepIndex].collect[""] = "";
         this.$forceUpdate();
       }
     },
-    removeCollect(stepIndex, collectKey) {
+    removeCollect(step, stepIndex, collectKey) {
       delete this.tests.steps[stepIndex].collect[collectKey];
+      this.$forceUpdate();
+    },
+    addCollectKey(step, stepIndex, key) {
+      if (this.tests.steps[stepIndex].collect[key] == undefined) {
+        delete this.tests.steps[stepIndex].collect[""];
+        this.tests.steps[stepIndex].collect[key] = "";
+      }
       this.$forceUpdate();
     },
     addEqualCheck(stepIndex) {
@@ -424,6 +485,13 @@ export default {
       delete this.tests.steps[stepIndex].check.body.eq[checkBodyEqKey];
       this.$forceUpdate();
     },
+    addEqualCheckKey(stepIndex, key) {
+      if (this.tests.steps[stepIndex].check.body.eq[key] == undefined) {
+        delete this.tests.steps[stepIndex].check.body.eq[""];
+        this.tests.steps[stepIndex].check.body.eq[key] = "";
+      }
+      this.$forceUpdate();
+    },
     addNequalCheck(stepIndex) {
       if (this.tests.steps[stepIndex].check.body.neq[""] == undefined) {
         this.tests.steps[stepIndex].check.body.neq[""] = "";
@@ -434,16 +502,21 @@ export default {
       delete this.tests.steps[stepIndex].check.body.neq[checkBodyNeqKey];
       this.$forceUpdate();
     },
+    addNequalCheckKey(stepIndex, key) {
+      if (this.tests.steps[stepIndex].check.body.neq[key] == undefined) {
+        delete this.tests.steps[stepIndex].check.body.neq[""];
+        this.tests.steps[stepIndex].check.body.neq[key] = "";
+      }
+      this.$forceUpdate();
+    },
     removeNull(stepIndex, nullIndex) {
       this.tests.steps[stepIndex].check.body.null.splice(nullIndex, 1);
     },
     addNull(stepIndex) {
       this.tests.steps[stepIndex].check.body.null.push("");
     },
-    removeDeepEqCheck(stepIndex, checkBodyDeepEqKey) {
-      delete this.tests.steps[stepIndex].check.body.deepEqual[
-        checkBodyDeepEqKey
-      ];
+    removeDeepEqCheck(stepIndex, key) {
+      delete this.tests.steps[stepIndex].check.body.deepEqual[key];
       this.$forceUpdate();
     },
     addDeepEqCheck(stepIndex) {
@@ -451,6 +524,13 @@ export default {
         this.tests.steps[stepIndex].check.body.deepEqual[""] = "";
         this.$forceUpdate();
       }
+    },
+    addDeepEqCheckKey(stepIndex, key) {
+      if (this.tests.steps[stepIndex].check.body.deepEqual[key] == undefined) {
+        delete this.tests.steps[stepIndex].check.body.deepEqual[""];
+        this.tests.steps[stepIndex].check.body.deepEqual[key] = "";
+      }
+      this.$forceUpdate();
     },
     removeRegexCheck(stepIndex, checkBodyRegexKey) {
       delete this.tests.steps[stepIndex].check.body.regex[checkBodyRegexKey];
@@ -462,6 +542,13 @@ export default {
         this.$forceUpdate();
       }
     },
+    addRegexCheckKey(stepIndex, key) {
+      if (this.tests.steps[stepIndex].check.body.regex[key] == undefined) {
+        delete this.tests.steps[stepIndex].check.body.regex[""];
+        this.tests.steps[stepIndex].check.body.regex[key] = "";
+      }
+      this.$forceUpdate();
+    },
     onFileUploaded(e) {
       let files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
@@ -471,7 +558,7 @@ export default {
       let reader = new FileReader();
       reader.onload = event => {
         let tests = YAML.safeLoad(event.target.result);
-        this.getValidDoc(tests);
+        tests = this.getValidDoc(tests);
         this.tests = tests;
       };
       reader.onerror = error => console.error(error);
@@ -492,14 +579,16 @@ export default {
         } else if (step.put != undefined) {
           step.type = "put";
           postAndPutObj = step.put;
-        } else if(step.local != undefined){
+        } else if (step.local != undefined) {
           step.type = "local";
         } else {
           //console.log("wrong YAML");
         }
       }
+      //console.log(JSON.stringify(JP.query(tests,"$")));
+      return tests;
     },
-    getLog(){
+    getLog() {
       //let yamlStr = YAML.safeDump(this.tests);
       //console.log(yamlStr);
     }
@@ -514,38 +603,27 @@ tests = {
 };
 
 getAndDeleteObj = {
-  url: "{{local_traffic_server}}/k.json", //required to all
+  url: "", //required to all
   headers: {
     //{"Authorization": "Basic xxxx"},
   } // optional to all
 };
 
 postAndPutObj = {
-  url: "{{local_traffic_server}}/postk.json", //required to all
+  url: "", //required to all
   json: "", //optional to post, not to get
   file: "", //optional to post, not to get
-  override: [
+  override: {
     //{"$.body": "~comment_text~"}
-  ], // optional to post, not to get
+  }, // optional to post, not to get
   headers: {} // optional to all
 };
 
 localObj = {
   file: ""
-}
+};
 
-var step = {
-  type: "get", // added for convienience
-  //"post": postAndPutObj,
-  get: getAndDeleteObj, //required
-  name: "Get Auth K", // required
-  delay: "", //needs to be string
-  iterate: "", //optional
-  print: [
-    //"status",
-    //"$.~key_name~"
-  ], //optional
-  check: {
+checkObj = {
     //all are optional
     status: 0,
     schema: "",
@@ -559,7 +637,20 @@ var step = {
       deepEqual: {},
       regex: {}
     }
-  }, //required
+  };
+
+var step = {
+  type: "get", // added for convienience
+  //"post": postAndPutObj,
+  get: getAndDeleteObj, //required
+  name: "Get Auth K", // required
+  delay: "", //needs to be string
+  iterate: "", //optional
+  print: [
+    //"status",
+    //"$.~key_name~"
+  ], //optional
+  check: checkObj, //required
   collect: {
     //"auth_key": "$.~key_name~",
     //"": ""
