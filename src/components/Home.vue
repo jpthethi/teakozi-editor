@@ -36,7 +36,15 @@
             <template v-for="(step, stepIndex) in tests.steps">
               <div class="form-group row">
                 <div class="col-12">
-                  <button type="button" class="btn btn-warning btn-xs float-right" title="Remove Step" @click="removeStep(stepIndex)">-</button>
+                  <a href="" class="red pull-right" title="Remove Step" @click.prevent="removeStep(stepIndex)">
+                    <i class="fa fa-trash-o fa-lg"></i>
+                  </a>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" v-model="step.name">
                 </div>
               </div>
               <div class="form-group row">
@@ -52,7 +60,7 @@
                 <div class="col-sm-10">
                   <template v-for="(stepTypeVal,stepTypeKey) in step[step.type]">
                     <template v-if="stepTypeKey == 'file'">
-                      <div class="form-group row">
+                      <div class="form-group row" :key="stepTypeKey">
                         <label for="" class="col-sm-2 col-form-label">{{stepTypeKey}}</label>
                         <div class="col-sm-10">
                           <input class="form-control" v-model="step[step.type].file" @keydown="$forceUpdate()">
@@ -60,7 +68,7 @@
                       </div>
                     </template>
                     <template v-if="stepTypeKey == 'url'">
-                      <div class="form-group row">
+                      <div class="form-group row" :key="stepTypeKey">
                         <label for="" class="col-sm-2 col-form-label">{{stepTypeKey}}</label>
                         <div class="col-sm-10">
                           <input class="form-control" v-model="step[step.type].url" @keydown="$forceUpdate()">
@@ -68,7 +76,7 @@
                       </div>
                     </template>
                     <template v-if="stepTypeKey == 'json'">
-                      <div class="form-group row">
+                      <div class="form-group row" :key="stepTypeKey">
                         <label for="" class="col-2 col-form-label">{{stepTypeKey}}</label>
                         <div class="col-10">
                           <input class="form-control" v-model="step[step.type].json" @keydown="$forceUpdate()">
@@ -76,7 +84,7 @@
                       </div>
                     </template>
                     <template v-if="stepTypeKey =='headers'">
-                      <div class="form-group row">
+                      <div class="form-group row" :key="stepTypeKey">
                         <label for="" class="col-2 col-form-label">{{stepTypeKey}}</label>
                         <div class="col-10">
                           <template v-for="(headerVal, headerKey ) in stepTypeVal">
@@ -97,7 +105,7 @@
                       </div>
                     </template>
                     <template v-if="stepTypeKey == 'override'">
-                      <div class="form-group row">
+                      <div class="form-group row" :key="stepTypeKey">
                         <label class="col-2 col-form-label">{{stepTypeKey}}</label>
                         <div class="col-10">
                           <template v-for="(overrideVal, overrideKey) in stepTypeVal">
@@ -120,221 +128,205 @@
                   </template>
                 </div>
               </div>
-              <template v-for="(stepVal, stepKey) in step">
-                <template v-if="stepKey == 'name'">
-                  <div class="form-group row">
-                    <label for="" class="col-sm-2 col-form-label">Name</label>
-                    <div class="col-sm-10">
-                      <input type="text" class="form-control" v-model="step.name">
+              <div class="form-group row">
+                <label for="" class="col-2 col-form-label">Delay</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" name="" v-model="step.delay">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-2 col-form-label">Iterate</label>
+                <div class="col-10">
+                  <input type="text" class="form-control" name="" v-model="step.iterate">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-sm-2 col-form-label" name="">Print</label>
+                <div class="col-sm-10">
+                  <template v-for="(print, printIndex) in step.print">
+                    <div class="form-group row">
+                      <div class="col-11">
+                        <input class="form-control" :value="print">
+                      </div>
+                      <div class="col-1">
+                        <button type="button" class="btn btn-warning" @click="removePrint(stepIndex, printIndex)">-</button>
+                      </div>
                     </div>
-                  </div>
-                </template>
-                <template v-if="stepKey == 'delay'">
-                  <div class="form-group row">
-                    <label for="" class="col-2 col-form-label">Delay</label>
-                    <div class="col-sm-10">
-                      <input type="text" class="form-control" name="" v-model="step.delay">
-                    </div>
-                  </div>
-                </template>
-                <template v-if="stepKey == 'iterate'">
-                  <div class="form-group row">
-                    <label for="" class="col-2 col-form-label">Iterate</label>
-                    <div class="col-10">
-                      <input type="text" class="form-control" name="" v-model="step.iterate">
-                    </div>
-                  </div>
-                </template>
-                <template v-if="stepKey == 'print'">
-								  <div class="form-group row">
-									<label for="" class="col-sm-2 col-form-label" name="">Print</label>
-                  <div class="col-sm-10">
-                    <template v-for="(print, printIndex) in step.print">
+                  </template>
+                  <button type="button" class="btn btn-info" title="Add Print Variables" @click="addPrint(stepIndex)">+</button>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-sm-2 col-form-label" name="">Check</label>
+                <div class="col-sm-10">
+                  <template v-for="(checkVal, checkKey) in step.check">
+                    <template v-if="checkKey == 'status'">
                       <div class="form-group row">
-                        <div class="col-11">
-                          <input class="form-control" :value="print">
-                        </div>
-                        <div class="col-1">
-                          <button type="button" class="btn btn-warning" @click="removePrint(stepIndex, printIndex)">-</button>
+                          <label for="" class="col-sm-2 col-form-label" name="">Status</label>
+                          <div class="col-sm-10">
+                            <input type="text" class="form-control" name="" v-model="step.check.status">
+                          </div>
+                      </div>
+                    </template>
+                    <template v-if="checkKey == 'schema'">
+                      <div class="form-group row">
+                        <label for="" class="col-2 col-form-label">Schema</label>
+                        <div class="col-10">
+                          <input type="text" class="form-control" name="" v-model="step.check.schema">
                         </div>
                       </div>
                     </template>
-                    <button type="button" class="btn btn-info" title="Add Print Variables" @click="addPrint(stepIndex)">+</button>
-                  </div>
-								</div>
-                </template>
-                <template v-if="stepKey == 'check'">
-                  <div class="form-group row">
-                  <label for="" class="col-sm-2 col-form-label" name="">Check</label>
-                  <div class="col-sm-10">
-                    <template v-for="(checkVal, checkKey) in step.check">
-                      <template v-if="checkKey == 'status'">
-                        <div class="form-group row">
-                            <label for="" class="col-sm-2 col-form-label" name="">Status</label>
-                            <div class="col-sm-10">
-                              <input type="text" class="form-control" name="" v-model="step.check.status">
-                            </div>
-                        </div>
-                      </template>
-                      <template v-if="checkKey == 'schema'">
-                        <div class="form-group row">
-                          <label for="" class="col-2 col-form-label">Schema</label>
-                          <div class="col-10">
-                            <input type="text" class="form-control" name="" v-model="step.check.schema">
-                          </div>
-                        </div>
-                      </template>
-                      <template v-if="checkKey == 'body'">
-                        <div class="form-group row">
-                          <label class="col-2 col-form-label">Body</label>
-                          <div class="col-10">
-                            <template v-for="(checkBodyVal, checkBodyKey) in step.check.body">
-                              <template v-if="checkBodyKey == 'eq'">
-                                <div class="form-group row">
-                                  <label class="col-2 col-form-label">eq</label>
-                                  <div class="col-10">
-                                    <template v-for="(checkBodyEqVal, checkBodyEqKey) in checkBodyVal">
-                                      <div class="form-group row">
-                                        <div class="col-5">
-                                          <input class="form-control" :value="checkBodyEqKey" @focusout="addEqualCheckKey(stepIndex, $event.target.value)">
-                                        </div>
-                                        <div class="col-5">
-                                          <input class="form-control" v-model="step.check.body.eq[checkBodyEqKey]" @focusout="$forceUpdate()">
-                                        </div>
-                                        <div class="col-2">
-                                          <button class="btn btn-warning pull-right" title="Remove Eq check" type="button" @click="removeEqualCheck(stepIndex, checkBodyEqKey)">-</button>
-                                        </div>
+                    <template v-if="checkKey == 'body'">
+                      <div class="form-group row">
+                        <label class="col-2 col-form-label">Body</label>
+                        <div class="col-10">
+                          <template v-for="(checkBodyVal, checkBodyKey) in step.check.body">
+                            <template v-if="checkBodyKey == 'eq'">
+                              <div class="form-group row">
+                                <label class="col-2 col-form-label">eq</label>
+                                <div class="col-10">
+                                  <template v-for="(checkBodyEqVal, checkBodyEqKey) in checkBodyVal">
+                                    <div class="form-group row">
+                                      <div class="col-5">
+                                        <input class="form-control" :value="checkBodyEqKey" @focusout="addEqualCheckKey(stepIndex, $event.target.value)">
                                       </div>
-                                    </template>
-                                    <button class="btn btn-info btn-xs" type="button" title="Add Equal Check" @click="addEqualCheck(stepIndex)">+</button>
-                                  </div>
-                                </div>
-                              </template>
-                              <template v-if="checkBodyKey == 'neq'">
-                                <div class="form-group row">
-                                  <label class="col-2 col-form-label">neq</label>
-                                  <div class="col-10">
-                                    <template v-for="(checkBodyNeqVal, checkBodyNeqKey) in checkBodyVal">
-                                      <div class="form-group row">
-                                        <div class="col-5">
-                                          <input class="form-control" :value="checkBodyNeqKey" @focusout="addNequalCheckKey(stepIndex, $event.target.value)">
-                                        </div>
-                                        <div class="col-5">
-                                          <input class="form-control" v-model="step.check.body.neq[checkBodyNeqKey]" @focusout="$forceUpdate()">
-                                        </div>
-                                        <div class="col-2">
-                                          <button class="btn btn-warning pull-right" title="Remove Neq Check" type="button" @click="removeNequalCheck(stepIndex, checkBodyNeqKey)">-</button>
-                                        </div>
+                                      <div class="col-5">
+                                        <input class="form-control" v-model="step.check.body.eq[checkBodyEqKey]" @focusout="$forceUpdate()">
                                       </div>
-                                    </template>
-                                    <button class="btn btn-info btn-xs" type="button" title="Add Neq Check" @click="addNequalCheck(stepIndex)">+</button>
-                                  </div>
-                                </div>
-                              </template>
-                              <template v-if="checkBodyKey == 'null'">
-                                <div class="form-group row">
-                									<label for="" class="col-sm-2 col-form-label" name="">null</label>
-                                  <div class="col-sm-10">
-                                    <template v-for="(nullVal, nullIndex) in checkBodyVal">
-                                      <div class="form-group row">
-                                        <div class="col-10">
-                                          <input class="form-control" v-model="step.check.body.null[nullIndex]">
-                                        </div>
-                                        <div class="col-2">
-                                          <button type="button" class="btn btn-warning pull-right" @click="removeNull(stepIndex, nullIndex)">-</button>
-                                        </div>
+                                      <div class="col-2">
+                                        <button class="btn btn-warning pull-right" title="Remove Eq check" type="button" @click="removeEqualCheck(stepIndex, checkBodyEqKey)">-</button>
                                       </div>
-                                    </template>
-                                  <button class="btn btn-info btn-xs" type="button" title="Add Null Check" @click="addNull(stepIndex)">+</button>
-                                  </div>
+                                    </div>
+                                  </template>
+                                  <button class="btn btn-info btn-xs" type="button" title="Add Equal Check" @click="addEqualCheck(stepIndex)">+</button>
                                 </div>
-                              </template>
-                              <template v-if="checkBodyKey == 'deepEqual'">
-                                <div class="form-group row">
-                                  <label class="col-2 col-form-label">deepEqual</label>
-                                  <div class="col-10">
-                                    <template v-for="(checkBodyDeepEqVal, checkBodyDeepEqKey) in checkBodyVal">
-                                      <div class="form-group row">
-                                        <div class="col-5">
-                                          <input class="form-control" :value="checkBodyDeepEqKey" @focusout="addDeepEqCheckKey(stepIndex, $event.target.value)">
-                                        </div>
-                                        <div class="col-5">
-                                          <input class="form-control" v-model="step.check.body.deepEqual[checkBodyDeepEqKey]" @focusout="$forceUpdate()">
-                                        </div>
-                                        <div class="col-2">
-                                          <button class="btn btn-warning pull-right" title="Remove Deep Equal Check" type="button" @click="removeDeepEqCheck(stepIndex, checkBodyDeepEqKey)">-</button>
-                                        </div>
-                                      </div>
-                                    </template>
-                                    <button class="btn btn-info btn-xs" type="button" title="Add Deep Equal Check" @click="addDeepEqCheck(stepIndex)">+</button>
-                                  </div>
-                                </div>
-                              </template>
-                              <template v-if="checkBodyKey == 'regex'">
-                                <div class="form-group row">
-                                  <label class="col-2 col-form-label">regex</label>
-                                  <div class="col-10">
-                                    <template v-for="(checkBodyRegexVal, checkBodyRegexKey) in checkBodyVal">
-                                      <div class="form-group row">
-                                        <div class="col-5">
-                                          <input class="form-control" :value="checkBodyRegexKey" @focusout="addRegexCheckKey(stepIndex, $event.target.value)">
-                                        </div>
-                                        <div class="col-5">
-                                          <input class="form-control" v-model="step.check.body.regex[checkBodyRegexKey]" @focusout="$forceUpdate()">
-                                        </div>
-                                        <div class="col-2">
-                                          <button class="btn btn-warning pull-right" title="Remove Regex Check" type="button" @click="removeRegexCheck(stepIndex, checkBodyRegexKey)">-</button>
-                                        </div>
-                                      </div>
-                                    </template>
-                                    <button class="btn btn-info btn-xs" type="button" title="Add Regex Check" @click="addRegexCheck(stepIndex)">+</button>
-                                  </div>
-                                </div>
-                              </template>
+                              </div>
                             </template>
-                          </div>
+                            <template v-if="checkBodyKey == 'neq'">
+                              <div class="form-group row">
+                                <label class="col-2 col-form-label">neq</label>
+                                <div class="col-10">
+                                  <template v-for="(checkBodyNeqVal, checkBodyNeqKey) in checkBodyVal">
+                                    <div class="form-group row">
+                                      <div class="col-5">
+                                        <input class="form-control" :value="checkBodyNeqKey" @focusout="addNequalCheckKey(stepIndex, $event.target.value)">
+                                      </div>
+                                      <div class="col-5">
+                                        <input class="form-control" v-model="step.check.body.neq[checkBodyNeqKey]" @focusout="$forceUpdate()">
+                                      </div>
+                                      <div class="col-2">
+                                        <button class="btn btn-warning pull-right" title="Remove Neq Check" type="button" @click="removeNequalCheck(stepIndex, checkBodyNeqKey)">-</button>
+                                      </div>
+                                    </div>
+                                  </template>
+                                  <button class="btn btn-info btn-xs" type="button" title="Add Neq Check" @click="addNequalCheck(stepIndex)">+</button>
+                                </div>
+                              </div>
+                            </template>
+                            <template v-if="checkBodyKey == 'null'">
+                              <div class="form-group row">
+                                <label for="" class="col-sm-2 col-form-label" name="">null</label>
+                                <div class="col-sm-10">
+                                  <template v-for="(nullVal, nullIndex) in checkBodyVal">
+                                    <div class="form-group row">
+                                      <div class="col-10">
+                                        <input class="form-control" v-model="step.check.body.null[nullIndex]">
+                                      </div>
+                                      <div class="col-2">
+                                        <button type="button" class="btn btn-warning pull-right" @click="removeNull(stepIndex, nullIndex)">-</button>
+                                      </div>
+                                    </div>
+                                  </template>
+                                <button class="btn btn-info btn-xs" type="button" title="Add Null Check" @click="addNull(stepIndex)">+</button>
+                                </div>
+                              </div>
+                            </template>
+                            <template v-if="checkBodyKey == 'deepEqual'">
+                              <div class="form-group row">
+                                <label class="col-2 col-form-label">deepEqual</label>
+                                <div class="col-10">
+                                  <template v-for="(checkBodyDeepEqVal, checkBodyDeepEqKey) in checkBodyVal">
+                                    <div class="form-group row">
+                                      <div class="col-5">
+                                        <input class="form-control" :value="checkBodyDeepEqKey" @focusout="addDeepEqCheckKey(stepIndex, $event.target.value)">
+                                      </div>
+                                      <div class="col-5">
+                                        <input class="form-control" v-model="step.check.body.deepEqual[checkBodyDeepEqKey]" @focusout="$forceUpdate()">
+                                      </div>
+                                      <div class="col-2">
+                                        <button class="btn btn-warning pull-right" title="Remove Deep Equal Check" type="button" @click="removeDeepEqCheck(stepIndex, checkBodyDeepEqKey)">-</button>
+                                      </div>
+                                    </div>
+                                  </template>
+                                  <button class="btn btn-info btn-xs" type="button" title="Add Deep Equal Check" @click="addDeepEqCheck(stepIndex)">+</button>
+                                </div>
+                              </div>
+                            </template>
+                            <template v-if="checkBodyKey == 'regex'">
+                              <div class="form-group row">
+                                <label class="col-2 col-form-label">regex</label>
+                                <div class="col-10">
+                                  <template v-for="(checkBodyRegexVal, checkBodyRegexKey) in checkBodyVal">
+                                    <div class="form-group row">
+                                      <div class="col-5">
+                                        <input class="form-control" :value="checkBodyRegexKey" @focusout="addRegexCheckKey(stepIndex, $event.target.value)">
+                                      </div>
+                                      <div class="col-5">
+                                        <input class="form-control" v-model="step.check.body.regex[checkBodyRegexKey]" @focusout="$forceUpdate()">
+                                      </div>
+                                      <div class="col-2">
+                                        <button class="btn btn-warning pull-right" title="Remove Regex Check" type="button" @click="removeRegexCheck(stepIndex, checkBodyRegexKey)">-</button>
+                                      </div>
+                                    </div>
+                                  </template>
+                                  <button class="btn btn-info btn-xs" type="button" title="Add Regex Check" @click="addRegexCheck(stepIndex)">+</button>
+                                </div>
+                              </div>
+                            </template>
+                          </template>
                         </div>
-                      </template>
+                      </div>
                     </template>
-                  </div>
+                  </template>
                 </div>
-                </template>
-                <template v-if="stepKey == 'collect'">
-                  <div class="form-group row">
-                    <label class="col-2 col-form-label">{{stepKey}}</label>
-                    <div class="col-10">
-                      <template v-for="(collectVal, collectKey) in stepVal">
-                        <div class="form-group row">
-                          <div class="col-5">
-                            <input class="form-control" :value="collectKey" @focusout="addCollectKey(step, stepIndex, $event.target.value)" placeholder="gist_id">
-                          </div>
-                          <div class="col-5">
-                            <input class="form-control" v-model="step.collect[collectKey]" placeholder="$.id" @focusout="$forceUpdate()">
-                          </div>
-                          <div class="col-2">
-                            <button class="btn btn-warning pull-right" title="Remove Collect" type="button" @click="removeCollect(step, stepIndex, collectKey)">-</button>
-                          </div>
-                        </div>
-                      </template>
-                      <button class="btn btn-info" title="Add Collect" type="button" @click="addCollect(step, stepIndex)">+</button>
+              </div>
+              <div class="form-group row">
+                <label class="col-2 col-form-label">Collect</label>
+                <div class="col-10">
+                  <template v-for="(collectVal, collectKey) in step.collect">
+                    <div class="form-group row">
+                      <div class="col-5">
+                        <input class="form-control" :value="collectKey" @focusout="addCollectKey(step, stepIndex, $event.target.value)" placeholder="gist_id">
+                      </div>
+                      <div class="col-5">
+                        <input class="form-control" v-model="step.collect[collectKey]" placeholder="$.id" @focusout="$forceUpdate()">
+                      </div>
+                      <div class="col-2">
+                        <button class="btn btn-warning pull-right" title="Remove Collect" type="button" @click="removeCollect(step, stepIndex, collectKey)">-</button>
+                      </div>
                     </div>
-                  </div>
-                </template>
-                <template v-if="stepKey == 'skip_on_error'">
-                  <div class="form-group row">
-                    <label class="col-2 col-form-label">Skip On Error</label>
-                    <div class="col-10">
-                      <select v-model="step.skip_on_error" class="form-control">
-                        <option value="true">TRUE</option>
-                        <option value="false">FALSE</option>
-                      </select>
-                    </div>
-                  </div>
-                </template>
-              </template>
+                  </template>
+                  <button class="btn btn-info" title="Add Collect" type="button" @click="addCollect(step, stepIndex)">+</button>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-2 col-form-label">Skip On Error</label>
+                <div class="col-10">
+                  <select v-model="step.skip_on_error" class="form-control">
+                    <option value="true">TRUE</option>
+                    <option value="false">FALSE</option>
+                  </select>
+                </div>
+              </div>
               <hr>
             </template>
-            <button type="button" class="btn btn-info btn-xs" title="Add Step" @click="addStep()">+</button>
+            <div class="form-group row mt-2">
+              <div class="col-12">
+              <a href="" @click.prevent="addStep()" title="Add Step">
+                <i class="fa fa-plus-square-o fa-lg"></i>
+              </a>
+              </div>
+            </div>
           </div>
         </div>
       </form>
@@ -343,6 +335,7 @@
 
 <script>
 var tests;
+var step;
 var getAndDeleteObj;
 var postAndPutObj;
 var localObj;
@@ -355,48 +348,7 @@ export default {
       tests: tests
     };
   },
-  beforeCreate(){
-      let jpTest = {
-        store: {
-          book: [
-            {
-              category: "reference",
-              author: "Nigel Rees",
-              title: "Sayings of the Century",
-              price: 8.95
-            },
-            {
-              category: "fiction",
-              author: "Evelyn Waugh",
-              title: "Sword of Honour",
-              price: 12.99
-            },
-            {
-              category: "fiction",
-              author: "Herman Melville",
-              title: "Moby Dick",
-              isbn: "0-553-21311-3",
-              price: 8.99
-            },
-            {
-              category: "fiction",
-              author: "J. R. R. Tolkien",
-              title: "The Lord of the Rings",
-              isbn: "0-395-19395-8",
-              price: 22.99
-            }
-          ],
-          bicycle: {
-            color: "red",
-            price: 19.95
-          }
-        }
-      };
-      console.log(JSON.stringify(JP.query(jpTest, "$..price")));
-      console.log(JSON.stringify(JP.paths(jpTest, "$..price")))
-  },
   updated() {
-    //console.log("updated");
     console.log("steps :::: ", JSON.stringify(this.tests.steps));
   },
   methods: {
@@ -557,9 +509,9 @@ export default {
     readFile(file) {
       let reader = new FileReader();
       reader.onload = event => {
-        let tests = YAML.safeLoad(event.target.result);
-        tests = this.getValidDoc(tests);
-        this.tests = tests;
+        let doc = YAML.safeLoad(event.target.result);
+        doc = this.getValidDoc(doc);
+        this.tests = doc;
       };
       reader.onerror = error => console.error(error);
       reader.readAsText(file);
@@ -569,24 +521,68 @@ export default {
       for (step of steps) {
         if (step.get != undefined) {
           step.type = "get";
-          getAndDeleteObj = step.get;
         } else if (step.post != undefined) {
           step.type = "post";
-          postAndPutObj = step.post;
         } else if (step.delete != undefined) {
           step.type = "delete";
-          getAndDeleteObj = step.delete;
         } else if (step.put != undefined) {
           step.type = "put";
-          postAndPutObj = step.put;
         } else if (step.local != undefined) {
           step.type = "local";
         } else {
           //console.log("wrong YAML");
         }
+        step = this.getValidStep(step);
+        step[step.type] = this.getValidStepType(step.type, step[step.type]);
+        step.check = this.getValidCheck(step.check);
+        step.check.body = this.getValidCheckBody(step.check.body);
       }
-      //console.log(JSON.stringify(JP.query(tests,"$")));
       return tests;
+    },
+    getValidStep(stepObj) {
+      let requiredKeys = Object.keys(step);
+      for (var key of requiredKeys) {
+        if (stepObj[key] == undefined) {
+          stepObj[key] = step[key];
+        }
+      }
+      return step;
+    },
+    getValidStepType(stepType, stepTypeObj) {
+      if (["get", "delete"].includes(stepType)) {
+        let requiredKeys = Object.keys(getAndDeleteObj);
+        for (var key of requiredKeys) {
+          if (stepTypeObj[key] == undefined) {
+            stepTypeObj[key] = getAndDeleteObj[key];
+          }
+        }
+      } else {
+        let requiredKeys = Object.keys(postAndPutObj);
+        for (var key in requiredKeys) {
+          if (stepTypeObj[key] == undefined) {
+            stepTypeObj[key] = postAndPutObj[key];
+          }
+        }
+      }
+      return stepTypeObj;
+    },
+    getValidCheck(stepCheckObj) {
+      let requiredKeys = Object.keys(checkObj);
+      for (var key of requiredKeys) {
+        if (stepCheckObj[key] == undefined) {
+          stepCheckObj[key] = checkObj[key];
+        }
+      }
+      return stepCheckObj;
+    },
+    getValidCheckBody(stepCheckBodyObj) {
+      let requiredKeys = Object.keys(checkObj.body);
+      for (var key of requiredKeys) {
+        if (stepCheckBodyObj[key] == undefined) {
+          stepCheckBodyObj[key] = checkObj.body[key];
+        }
+      }
+      return stepCheckBodyObj;
     },
     getLog() {
       //let yamlStr = YAML.safeDump(this.tests);
@@ -624,22 +620,22 @@ localObj = {
 };
 
 checkObj = {
-    //all are optional
-    status: 0,
-    schema: "",
-    body: {
-      eq: {
-        //"$.length": 20,
-        //"$..[0].name": ""
-      },
-      neq: {},
-      null: [],
-      deepEqual: {},
-      regex: {}
-    }
-  };
+  //all are optional
+  status: 0,
+  schema: "",
+  body: {
+    eq: {
+      //"$.length": 20,
+      //"$..[0].name": ""
+    },
+    neq: {},
+    null: [],
+    deepEqual: {},
+    regex: {}
+  }
+};
 
-var step = {
+step = {
   type: "get", // added for convienience
   //"post": postAndPutObj,
   get: getAndDeleteObj, //required
@@ -659,5 +655,8 @@ var step = {
 };
 </script>
 
-<style lang="css">
+<style lang="scss">
+red {
+  color: red;
+}
 </style>
