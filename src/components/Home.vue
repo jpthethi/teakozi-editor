@@ -24,6 +24,9 @@
         label.col-2.col-form-label(for='') Steps
         .col-10
           template(v-for='(step, stepIndex) in tests.steps')
+            step(v-bind:step='step' v-bind:stepIndex="stepIndex")
+
+          //template(v-for='(step, stepIndex) in tests.steps')
             .form-group.row
               .col-12
                 a.red.pull-right(href='', title='Remove Step', @click.prevent='removeStep(stepIndex)')
@@ -238,7 +241,7 @@ const YAML = require("js-yaml");
 import Step from "./Step.vue";
 export default {
   components: {
-    "step-1": Step,
+    step: Step
   },
   data: function() {
     return {
