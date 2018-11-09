@@ -1,7 +1,6 @@
 <template lang="html">
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <router-link to="/" class="navbar-brand">Teakozi Editor</router-link>
-
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">

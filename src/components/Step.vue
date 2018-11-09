@@ -1,5 +1,5 @@
 <template lang="pug">
-  .row
+  .form-group
     .form-group.row
       .col-12
         a.red.pull-right(href='', title='Remove Step', @click.prevent='removeStep(stepIndex)')
@@ -10,7 +10,7 @@
         input.form-control(type='text', v-model='step.name')
     .form-group.row
       .col-sm-2
-        select.form-control(v-model='step.type', @change='stepTypeChanged(step, stepIndex)')
+        select.form-control(v-model='step.type', @change='stepTypeChanged(step)')
           option(value='get') GET
           option(value='post') POST
           option(value='put') PUT
@@ -40,13 +40,13 @@
                 template(v-for='(headerVal, headerKey ) in stepTypeVal')
                   .form-group.row(:key='headerKey')
                     .col-5
-                      input.form-control(placeholder='Authorization', :value='headerKey', @focusout='addHeaderKey(step, stepIndex, $event.target.value)')
+                      input.form-control(placeholder='Authorization', :value='headerKey', @focusout='addHeaderKey($event.target.value)')
                     .col-5
                       input.form-control(placeholder='Basic ***', v-model='step[step.type].headers[headerKey]', @focusout='$forceUpdate()')
                     .col-2
-                      a(href='', @click.prevent='removeHeader(step, stepIndex, headerKey)', title="Remove Header")
+                      a(href='', @click.prevent='removeHeader(headerKey)', title="Remove Header")
                         i.fa.fa-trash-o.fa-lg
-                a(href='', @click.prevent='addHeader(step, stepIndex)', title="Add Header")
+                a(href='', @click.prevent='addHeader()', title="Add Header")
                   i.fa.fa-plus-square-o.fa-lg
           template(v-if="stepTypeKey == 'override'")
             .form-group.row(:key='stepTypeKey')
@@ -55,13 +55,13 @@
                 template(v-for='(overrideVal, overrideKey) in stepTypeVal')
                   .form-group.row(:key='overrideKey')
                     .col-5
-                      input.form-control(placeholder='$.body', :value='overrideKey', @focusout='addOverrideKey(step, stepIndex, $event.target.value)')
+                      input.form-control(placeholder='$.body', :value='overrideKey', @focusout='addOverrideKey($event.target.value)')
                     .col-5
                       input.form-control(placeholder='~comment_text~', v-model='step[step.type].override[overrideKey]', @focusout='$forceUpdate()')
                     .col-2
-                      a(href='', @click.prevent='removeOverride(step, overrideKey)', title="Remove Header")
+                      a(href='', @click.prevent='removeOverride(overrideKey)', title="Remove Header")
                         i.fa.fa-trash-o.fa-lg
-                a(href='', @click.prevent='addOverride(step, stepIndex)', title="Add Override")
+                a(href='', @click.prevent='addOverride()', title="Add Override")
                   i.fa.fa-plus-square-o.fa-lg
     .form-group.row
       label.col-2.col-form-label(for='') Delay
@@ -77,11 +77,11 @@
         template(v-for='(print, printIndex) in step.print')
           .form-group.row
             .col-11
-              input.form-control(:value='print')
+              input.form-control(v-model="step.print[printIndex]")
             .col-1
-              a(href='', @click.prevent='removePrint(stepIndex, printIndex)', title="Remove Print")
+              a(href='', @click.prevent='removePrint(printIndex)', title="Remove Print")
                 i.fa.fa-trash-o.fa-lg
-        a(href='', @click.prevent='addPrint(stepIndex)', title="Add Print Variables")
+        a(href='', @click.prevent='addPrint()', title="Add Print Variables")
           i.fa.fa-plus-square-o.fa-lg
     .form-group.row
       label.col-sm-2.col-form-label(for='', name='') Check
@@ -109,13 +109,13 @@
                         template(v-for='(checkBodyEqVal, checkBodyEqKey) in checkBodyVal')
                           .form-group.row
                             .col-5
-                              input.form-control(:value='checkBodyEqKey', @focusout='addEqualCheckKey(stepIndex, $event.target.value)')
+                              input.form-control(:value='checkBodyEqKey', @focusout='addEqualCheckKey($event.target.value)')
                             .col-5
                               input.form-control(v-model='step.check.body.eq[checkBodyEqKey]', @focusout='$forceUpdate()')
                             .col-2
-                              a(href='', @click.prevent='removeEqualCheck(stepIndex, checkBodyEqKey)', title="Remove Eq check")
+                              a(href='', @click.prevent='removeEqualCheck(checkBodyEqKey)', title="Remove Eq check")
                                 i.fa.fa-trash-o.fa-lg
-                        a(href='', @click.prevent='addEqualCheck(stepIndex)', title="Add Equal Check")
+                        a(href='', @click.prevent='addEqualCheck()', title="Add Equal Check")
                           i.fa.fa-plus-square-o.fa-lg
                   template(v-if="checkBodyKey == 'neq'")
                     .form-group.row
@@ -124,13 +124,13 @@
                         template(v-for='(checkBodyNeqVal, checkBodyNeqKey) in checkBodyVal')
                           .form-group.row
                             .col-5
-                              input.form-control(:value='checkBodyNeqKey', @focusout='addNequalCheckKey(stepIndex, $event.target.value)')
+                              input.form-control(:value='checkBodyNeqKey', @focusout='addNequalCheckKey($event.target.value)')
                             .col-5
                               input.form-control(v-model='step.check.body.neq[checkBodyNeqKey]', @focusout='$forceUpdate()')
                             .col-2
-                              a(href='', @click.prevent='removeNequalCheck(stepIndex, checkBodyNeqKey)', title="Remove Neq Check")
+                              a(href='', @click.prevent='removeNequalCheck(checkBodyNeqKey)', title="Remove Neq Check")
                                 i.fa.fa-trash-o.fa-lg
-                        a(href='', @click.prevent='addNequalCheck(stepIndex)', title="Add Neq Check")
+                        a(href='', @click.prevent='addNequalCheck()', title="Add Neq Check")
                           i.fa.fa-plus-square-o.fa-lg
                   template(v-if="checkBodyKey == 'null'")
                     .form-group.row
@@ -141,9 +141,9 @@
                             .col-10
                               input.form-control(v-model='step.check.body.null[nullIndex]')
                             .col-2
-                              a(href='', @click.prevent='removeNull(stepIndex, nullIndex)', title="Remove Null Check")
+                              a(href='', @click.prevent='removeNull(nullIndex)', title="Remove Null Check")
                                 i.fa.fa-trash-o.fa-lg
-                        a(href='', @click.prevent='addNull(stepIndex)', title="Add Null Check")
+                        a(href='', @click.prevent='addNull()', title="Add Null Check")
                           i.fa.fa-plus-square-o.fa-lg
                   template(v-if="checkBodyKey == 'deepEqual'")
                     .form-group.row
@@ -152,13 +152,13 @@
                         template(v-for='(checkBodyDeepEqVal, checkBodyDeepEqKey) in checkBodyVal')
                           .form-group.row
                             .col-5
-                              input.form-control(:value='checkBodyDeepEqKey', @focusout='addDeepEqCheckKey(stepIndex, $event.target.value)')
+                              input.form-control(:value='checkBodyDeepEqKey', @focusout='addDeepEqCheckKey($event.target.value)')
                             .col-5
                               input.form-control(v-model='step.check.body.deepEqual[checkBodyDeepEqKey]', @focusout='$forceUpdate()')
                             .col-2
-                              a(href='', @click.prevent='removeDeepEqCheck(stepIndex, checkBodyDeepEqKey)', title="Remove Deep Equal Check")
+                              a(href='', @click.prevent='removeDeepEqCheck(checkBodyDeepEqKey)', title="Remove Deep Equal Check")
                                 i.fa.fa-trash-o.fa-lg
-                        a(href='', @click.prevent='addDeepEqCheck(stepIndex)', title="Add Deep Equal Check")
+                        a(href='', @click.prevent='addDeepEqCheck()', title="Add Deep Equal Check")
                           i.fa.fa-plus-square-o.fa-lg
                   template(v-if="checkBodyKey == 'regex'")
                     .form-group.row
@@ -167,13 +167,13 @@
                         template(v-for='(checkBodyRegexVal, checkBodyRegexKey) in checkBodyVal')
                           .form-group.row
                             .col-5
-                              input.form-control(:value='checkBodyRegexKey', @focusout='addRegexCheckKey(stepIndex, $event.target.value)')
+                              input.form-control(:value='checkBodyRegexKey', @focusout='addRegexCheckKey($event.target.value)')
                             .col-5
                               input.form-control(v-model='step.check.body.regex[checkBodyRegexKey]', @focusout='$forceUpdate()')
                             .col-2
-                              a(href='', @click.prevent='removeRegexCheck(stepIndex, checkBodyRegexKey)', title="Remove Regex Check")
+                              a(href='', @click.prevent='removeRegexCheck(checkBodyRegexKey)', title="Remove Regex Check")
                                 i.fa.fa-trash-o.fa-lg
-                        a(href='', @click.prevent='addRegexCheck(stepIndex)', title="Add Regex Check")
+                        a(href='', @click.prevent='addRegexCheck()', title="Add Regex Check")
                           i.fa.fa-plus-square-o.fa-lg
     .form-group.row
       label.col-2.col-form-label Collect
@@ -181,13 +181,13 @@
         template(v-for='(collectVal, collectKey) in step.collect')
           .form-group.row
             .col-5
-              input.form-control(:value='collectKey', @focusout='addCollectKey(step, stepIndex, $event.target.value)', placeholder='gist_id')
+              input.form-control(:value='collectKey', @focusout='addCollectKey($event.target.value)', placeholder='gist_id')
             .col-5
               input.form-control(v-model='step.collect[collectKey]', placeholder='$.id', @focusout='$forceUpdate()')
             .col-2
-              a(href='', @click.prevent='removeCollect(step, stepIndex, collectKey)', title="Remove Collect")
+              a(href='', @click.prevent='removeCollect(collectKey)', title="Remove Collect")
                 i.fa.fa-trash-o.fa-lg
-        a(href='', @click.prevent='addCollect(step, stepIndex)', title="Add Collect")
+        a(href='', @click.prevent='addCollect()', title="Add Collect")
           i.fa.fa-plus-square-o.fa-lg
     .form-group.row
       label.col-2.col-form-label Skip On Error
@@ -199,208 +199,171 @@
 </template>
 
 <script>
+import Store from "../store.js";
 var step;
-var getAndDeleteObj;
-var postAndPutObj;
-var localObj;
-var checkObj;
+var getAndDeleteObj = Store.state.getAndDeleteObj;
+var postAndPutObj = Store.state.postAndPutObj;
+var localObj = Store.state.localObj;
+var checkObj = Store.state.checkObj;
 const YAML = require("js-yaml");
 
 export default {
-  props: ["step", "stepIndex"],
+  props: ["step", "stepIndex", "tests"],
   data: function() {
     return {};
   },
   updated() {
-    console.log("steps :::: ", JSON.stringify(this.tests.steps));
+    console.log("step :::: updating in step too ::: ", JSON.stringify(this.tests));
+    this.$emit("stepUpdated", [this.stepIndex, this.step]);
   },
   methods: {
-    stepTypeChanged(step, stepIndex) {
-      delete this.tests.steps[stepIndex].get;
-      delete this.tests.steps[stepIndex].post;
-      delete this.tests.steps[stepIndex].put;
-      delete this.tests.steps[stepIndex].delete;
+    removeStep(stepIndex) {
+      this.tests.steps.splice(stepIndex, 1);
+    },
+    stepTypeChanged(step) {
+      delete this.step.get;
+      delete this.step.post;
+      delete this.step.put;
+      delete this.step.delete;
 
-      if (step.type == "get" || step.type == "delete")
-        this.tests.steps[stepIndex][step.type] = getAndDeleteObj;
-      else if (step.type == "post" || step.type == "put")
-        this.tests.steps[stepIndex][step.type] = postAndPutObj;
-      else this.tests.steps[stepIndex][step.type] = localObj;
+      if (this.step.type == "get" || this.step.type == "delete")
+        this.step[step.type] = getAndDeleteObj;
+      else if (this.step.type == "post" || this.step.type == "put")
+        this.step[this.step.type] = postAndPutObj;
+      else this.step[this.step.type] = localObj;
     },
-    addHeader(step, stepIndex) {
-      if (this.tests.steps[stepIndex][step.type].headers[""] == undefined) {
-        this.tests.steps[stepIndex][step.type].headers[""] = "";
+    addHeader() {
+      if (this.step[this.step.type].headers[""] == undefined) {
+        this.step[this.step.type].headers[""] = "";
         this.$forceUpdate();
       }
     },
-    removeHeader(step, stepIndex, headerKey) {
-      delete this.tests.steps[stepIndex][step.type].headers[headerKey];
+    removeHeader(headerKey) {
+      delete this.step[this.step.type].headers[headerKey];
       this.$forceUpdate();
     },
-    addHeaderKey(step, stepIndex, key) {
-      if (this.tests.steps[stepIndex][step.type].headers[key] == undefined) {
-        delete this.tests.steps[stepIndex][step.type].headers[""];
-        this.tests.steps[stepIndex][step.type].headers[key] = "";
+    addHeaderKey(key) {
+      if (this.step[this.step.type].headers[key] == undefined) {
+        delete this.step[this.step.type].headers[""];
+        this.step[this.step.type].headers[key] = "";
       }
       this.$forceUpdate();
     },
-    addOverride(step, stepIndex) {
-      if (this.tests.steps[stepIndex][step.type].override[""] == undefined) {
-        this.tests.steps[stepIndex][step.type].override[""] = "";
+    addOverride() {
+      if (this.step[this.step.type].override[""] == undefined) {
+        this.step[this.step.type].override[""] = "";
         this.$forceUpdate();
       }
     },
-    removeOverride(step, overrideKey) {
-      delete step[step.type].override[overrideKey];
+    removeOverride(overrideKey) {
+      delete this.step[this.step.type].override[overrideKey];
       this.$forceUpdate();
     },
-    addOverrideKey(step, stepIndex, key) {
-      if (this.tests.steps[stepIndex][step.type].override[key] == undefined) {
-        delete this.tests.steps[stepIndex][step.type].override[""];
-        this.tests.steps[stepIndex][step.type].override[key] = "";
+    addOverrideKey(key) {
+      if (this.step[this.step.type].override[key] == undefined) {
+        delete this.step[this.step.type].override[""];
+        this.step[this.step.type].override[key] = "";
       }
       this.$forceUpdate();
     },
-    removePrint(stepIndex, printIndex) {
-      this.tests.steps[stepIndex].print.splice(printIndex, 1);
+    removePrint(printIndex) {
+      this.step.print.splice(printIndex, 1);
     },
-    addPrint(stepIndex) {
-      this.tests.steps[stepIndex].print.push("");
+    addPrint() {
+      this.step.print.push("");
     },
-    addCollect(step, stepIndex) {
-      if (this.tests.steps[stepIndex].collect[""] == undefined) {
-        this.tests.steps[stepIndex].collect[""] = "";
+    addCollect() {
+      if (this.step.collect[""] == undefined) {
+        this.step.collect[""] = "";
         this.$forceUpdate();
       }
     },
-    removeCollect(step, stepIndex, collectKey) {
-      delete this.tests.steps[stepIndex].collect[collectKey];
+    removeCollect(collectKey) {
+      delete this.step.collect[collectKey];
       this.$forceUpdate();
     },
-    addCollectKey(step, stepIndex, key) {
-      if (this.tests.steps[stepIndex].collect[key] == undefined) {
-        delete this.tests.steps[stepIndex].collect[""];
-        this.tests.steps[stepIndex].collect[key] = "";
+    addCollectKey(key) {
+      if (this.step.collect[key] == undefined) {
+        delete this.step.collect[""];
+        this.step.collect[key] = "";
       }
       this.$forceUpdate();
     },
-    addEqualCheck(stepIndex) {
-      if (this.tests.steps[stepIndex].check.body.eq[""] == undefined) {
-        this.tests.steps[stepIndex].check.body.eq[""] = "";
+    addEqualCheck() {
+      if (this.step.check.body.eq[""] == undefined) {
+        this.step.check.body.eq[""] = "";
         this.$forceUpdate();
       }
     },
-    removeEqualCheck(stepIndex, checkBodyEqKey) {
-      delete this.tests.steps[stepIndex].check.body.eq[checkBodyEqKey];
+    removeEqualCheck(checkBodyEqKey) {
+      delete this.step.check.body.eq[checkBodyEqKey];
       this.$forceUpdate();
     },
-    addEqualCheckKey(stepIndex, key) {
-      if (this.tests.steps[stepIndex].check.body.eq[key] == undefined) {
-        delete this.tests.steps[stepIndex].check.body.eq[""];
-        this.tests.steps[stepIndex].check.body.eq[key] = "";
+    addEqualCheckKey(key) {
+      if (this.step.check.body.eq[key] == undefined) {
+        delete this.step.check.body.eq[""];
+        this.step.check.body.eq[key] = "";
       }
       this.$forceUpdate();
     },
-    addNequalCheck(stepIndex) {
-      if (this.tests.steps[stepIndex].check.body.neq[""] == undefined) {
-        this.tests.steps[stepIndex].check.body.neq[""] = "";
+    addNequalCheck() {
+      if (this.step.check.body.neq[""] == undefined) {
+        this.step.check.body.neq[""] = "";
         this.$forceUpdate();
       }
     },
-    removeNequalCheck(stepIndex, checkBodyNeqKey) {
-      delete this.tests.steps[stepIndex].check.body.neq[checkBodyNeqKey];
+    removeNequalCheck(checkBodyNeqKey) {
+      delete this.step.check.body.neq[checkBodyNeqKey];
       this.$forceUpdate();
     },
-    addNequalCheckKey(stepIndex, key) {
-      if (this.tests.steps[stepIndex].check.body.neq[key] == undefined) {
-        delete this.tests.steps[stepIndex].check.body.neq[""];
-        this.tests.steps[stepIndex].check.body.neq[key] = "";
+    addNequalCheckKey(key) {
+      if (this.step.check.body.neq[key] == undefined) {
+        delete this.step.check.body.neq[""];
+        this.step.check.body.neq[key] = "";
       }
       this.$forceUpdate();
     },
-    removeNull(stepIndex, nullIndex) {
-      this.tests.steps[stepIndex].check.body.null.splice(nullIndex, 1);
+    removeNull(nullIndex) {
+      this.step.check.body.null.splice(nullIndex, 1);
     },
-    addNull(stepIndex) {
-      this.tests.steps[stepIndex].check.body.null.push("");
+    addNull() {
+      this.step.check.body.null.push("");
     },
-    removeDeepEqCheck(stepIndex, key) {
-      delete this.tests.steps[stepIndex].check.body.deepEqual[key];
+    removeDeepEqCheck(key) {
+      delete this.step.check.body.deepEqual[key];
       this.$forceUpdate();
     },
-    addDeepEqCheck(stepIndex) {
-      if (this.tests.steps[stepIndex].check.body.deepEqual[""] == undefined) {
-        this.tests.steps[stepIndex].check.body.deepEqual[""] = "";
+    addDeepEqCheck() {
+      if (this.step.check.body.deepEqual[""] == undefined) {
+        this.step.check.body.deepEqual[""] = "";
         this.$forceUpdate();
       }
     },
-    addDeepEqCheckKey(stepIndex, key) {
-      if (this.tests.steps[stepIndex].check.body.deepEqual[key] == undefined) {
-        delete this.tests.steps[stepIndex].check.body.deepEqual[""];
-        this.tests.steps[stepIndex].check.body.deepEqual[key] = "";
+    addDeepEqCheckKey(key) {
+      if (this.step.check.body.deepEqual[key] == undefined) {
+        delete this.step.check.body.deepEqual[""];
+        this.step.check.body.deepEqual[key] = "";
       }
       this.$forceUpdate();
     },
-    removeRegexCheck(stepIndex, checkBodyRegexKey) {
-      delete this.tests.steps[stepIndex].check.body.regex[checkBodyRegexKey];
+    removeRegexCheck(checkBodyRegexKey) {
+      delete this.step.check.body.regex[checkBodyRegexKey];
       this.$forceUpdate();
     },
-    addRegexCheck(stepIndex) {
-      if (this.tests.steps[stepIndex].check.body.regex[""] == undefined) {
-        this.tests.steps[stepIndex].check.body.regex[""] = "";
+    addRegexCheck() {
+      if (this.step.check.body.regex[""] == undefined) {
+        this.step.check.body.regex[""] = "";
         this.$forceUpdate();
       }
     },
-    addRegexCheckKey(stepIndex, key) {
-      if (this.tests.steps[stepIndex].check.body.regex[key] == undefined) {
-        delete this.tests.steps[stepIndex].check.body.regex[""];
-        this.tests.steps[stepIndex].check.body.regex[key] = "";
+    addRegexCheckKey(key) {
+      if (this.step.check.body.regex[key] == undefined) {
+        delete this.step.check.body.regex[""];
+        this.step.check.body.regex[key] = "";
       }
       this.$forceUpdate();
     }
   }
-};
-getAndDeleteObj = {
-  url: "", //required to all
-  headers: {} // optional to all
-};
-
-postAndPutObj = {
-  url: "", //required to all
-  json: "", //optional to post, not to get
-  file: "", //optional to post, not to get
-  override: {}, // optional to post, not to get
-  headers: {} // optional to all
-};
-
-localObj = {
-  file: ""
-};
-
-checkObj = {
-  //all are optional
-  status: 0,
-  schema: "",
-  body: {
-    eq: {},
-    neq: {},
-    null: [],
-    deepEqual: {},
-    regex: {}
-  }
-};
-
-step = {
-  type: "get", // added for convienience
-  //"post": postAndPutObj,
-  get: getAndDeleteObj, //required
-  name: "Get Auth K", // required
-  delay: "", //needs to be string
-  iterate: "", //optional
-  print: [], //optional
-  check: checkObj, //required
-  collect: {}, //optional
-  skip_on_error: true //optional
 };
 </script>
 
