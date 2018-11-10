@@ -53,17 +53,22 @@ var tests = {
 };
 export default new Vuex.Store({
   state: {
-    tests: tests,
-    step: step,
-    getAndDeleteObj: getAndDeleteObj,
-    postAndPutObj: postAndPutObj,
-    localObj: localObj,
-    checkObj: checkObj
+    tests,
+    step,
+    getAndDeleteObj,
+    postAndPutObj,
+    localObj,
+    checkObj,
   },
   mutations: {
-
+    testsUpdated(state, tests) {
+      state.tests = tests;
+    }
   },
   actions: {
+
+  },
+  getters: {
 
   }
 });

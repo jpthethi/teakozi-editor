@@ -36,6 +36,12 @@
 import Step from "./Step.vue";
 import Store from "../store.js";
 var tests;
+var step = Store.state.step;
+var getAndDeleteObj = Store.state.getAndDeleteObj;
+var postAndPutObj = Store.state.postAndPutObj;
+var localObj = Store.state.localObj;
+var checkObj = Store.state.checkObj;
+
 const YAML = require("js-yaml");
 //const JP = require("jsonpath");
 
@@ -47,7 +53,7 @@ export default {
     return {
       tests: Store.state.tests,
       step: Store.state.step
-    }
+    };
   },
   updated() {
     console.log("steps :::: ", JSON.stringify(this.tests));
@@ -57,9 +63,8 @@ export default {
       console.log("============  ", JSON.stringify(this.step));
       this.tests.steps.push(_.cloneDeep(this.step));
     },
-    stepUpdated(stepObj){
+    stepUpdated(stepObj) {
       this.tests.steps[stepObj[0]] = stepObj[1];
-      console.log(";;;;;;;;;;;  ", JSON.stringify(this.tests));
     },
     onFileUploaded(e) {
       let files = e.target.files || e.dataTransfer.files;
@@ -150,7 +155,6 @@ export default {
     }
   }
 };
-
 </script>
 
 <style lang="scss">

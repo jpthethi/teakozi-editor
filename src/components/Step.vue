@@ -213,7 +213,10 @@ export default {
     return {};
   },
   updated() {
-    console.log("step :::: updating in step too ::: ", JSON.stringify(this.tests));
+    console.log(
+      "step :::: updating in step too ::: ",
+      JSON.stringify(this.tests)
+    );
     this.$emit("stepUpdated", [this.stepIndex, this.step]);
   },
   methods: {
