@@ -38,7 +38,7 @@ var step = {
   get: getAndDeleteObj, //required
   name: "Get Auth K", // required
   delay: "", //needs to be string
-  iterate: "", //optional
+  //iterate: "", //optional
   print: [], //optional
   check: checkObj, //required
   collect: {}, //optional

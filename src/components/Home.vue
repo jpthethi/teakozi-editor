@@ -1,8 +1,12 @@
 <template lang="pug">
   .container.mt-3
-    h1
-      | Test File
     form
+      .form-group.row.project-row
+        .col-6
+          input.form-control(placeholder="Enter Project Name" @focusout="createProject($event.target.value)")
+        .col-6.pt-2
+          a.red.delete-project(title="Delete Project" href="" @click.prevent="deleteProject()")
+            i.fa.fa-trash-o.fa-lg
       .form-group.row
         .col-sm-8
           button.btn.btn-info(type='button', @click='getLog()') Get Log
@@ -35,6 +39,8 @@
 <script>
 import Step from "./Step.vue";
 import Store from "../store.js";
+import Axios from "axios";
+
 var tests;
 var step = Store.state.step;
 var getAndDeleteObj = Store.state.getAndDeleteObj;
@@ -51,14 +57,26 @@ export default {
   },
   data: function() {
     return {
+      projectName: "",
       tests: Store.state.tests,
       step: Store.state.step
     };
   },
   updated() {
-    console.log("steps :::: ", JSON.stringify(this.tests));
+    console.log("latest tests :::: ", JSON.stringify(this.tests));
   },
   methods: {
+    createProject(projectName) {
+      this.projectName = projectName;
+      Axios.post("/api/createproject", { projectName })
+        .then(res => {
+          console.log("response is : ", res);
+        })
+        .catch(err => {
+          console.log("Error while creating Project : ", err);
+        });
+    },
+    deleteProject() {},
     addStep() {
       console.log("============  ", JSON.stringify(this.step));
       this.tests.steps.push(_.cloneDeep(this.step));
@@ -150,15 +168,48 @@ export default {
       return stepCheckBodyObj;
     },
     getLog() {
-      //let yamlStr = YAML.safeDump(this.tests);
-      //console.log(yamlStr);
+      let yamlTests = _.cloneDeep(this.tests);
+      delete yamlTests.iterate;
+      yamlTests.steps.filter(step => {
+        delete step.type;
+        delete step.iterate;
+        return true;
+      });
+      let yamlStr = YAML.safeDump(yamlTests);
+      console.log("Sending this.tests are :::: ", JSON.stringify(yamlTests));
+      console.log(yamlStr);
+
+      Axios.post("/api/getLog", { yaml: yamlStr })
+        .then(res => {
+          console.log("response ::::: ", res);
+          console.log("log report is ::::: ", res);
+          this.$router.push({
+            name: "logreport",
+            params: { log: res.data.testResponse }
+          });
+        })
+        .catch(err => {
+          console.log("Error ::: ", err);
+        });
     }
   }
 };
 </script>
 
 <style lang="scss">
-red {
+.red {
   color: red;
+}
+
+.delete-project {
+  opacity: 0;
+}
+
+.delete-project:hover {
+  color: red;
+}
+
+.project-row:hover .delete-project {
+  opacity: 1;
 }
 </style>
