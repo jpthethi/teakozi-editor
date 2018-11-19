@@ -28,12 +28,11 @@
         label.col-2.col-form-label(for='') Steps
         .col-10
           template(v-for='(step, stepIndex) in tests.steps')
-            app-step(v-bind:step='step' v-bind:step-index="stepIndex" v-bind:tests="tests" @stepUpdated="stepUpdated")
-            hr
+            app-step.mb-5(v-bind:step='step' v-bind:step-index="stepIndex" v-bind:tests="tests" @stepUpdated="stepUpdated")
           .form-group.row.mt-2
             .col-12
               a(href='', @click.prevent='addStep()', title='Add Step')
-                i.fa.fa-plus-square-o.fa-lg
+                i.material-icons(style="font-size:1.5em;") library_add
 </template>
 
 <script>
@@ -212,4 +211,9 @@ export default {
 .project-row:hover .delete-project {
   opacity: 1;
 }
+//@import "../../node_modules/bootstrap/scss/_variables";
+$theme-colors: (
+  "primary": #d95700
+);
+@import "../../node_modules/bootstrap/scss/bootstrap";
 </style>

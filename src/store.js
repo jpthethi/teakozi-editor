@@ -21,7 +21,7 @@ var localObj = {
 
 var checkObj = {
   //all are optional
-  status: 0,
+  status: 200,
   schema: "",
   body: {
     eq: {},
@@ -34,11 +34,9 @@ var checkObj = {
 
 var step = {
   type: "get", // added for convienience
-  //"post": postAndPutObj,
   get: getAndDeleteObj, //required
-  name: "Get Auth K", // required
+  name: "", // required
   delay: "", //needs to be string
-  //iterate: "", //optional
   print: [], //optional
   check: checkObj, //required
   collect: {}, //optional
@@ -48,7 +46,7 @@ var step = {
 var tests = {
   name: "",
   tags: "",
-  iterate: "many_runs",
+  iterate: "",
   steps: []
 };
 export default new Vuex.Store({
