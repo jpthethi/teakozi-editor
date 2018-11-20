@@ -1,7 +1,7 @@
 <template lang="pug">
   .card
     .card-header
-      .form-group.row
+      .form-group.row.mb-0
         .col-12
           a.red.pull-right(href='' title='Remove Step' @click.prevent='removeStep(stepIndex)')
             i.fa.fa-trash-o.fa-lg
@@ -9,13 +9,13 @@
             i.material-icons(style="font-size:1.5em;") loop
           a.pull-right.mr-2(href="" title="Check Response")
             i.material-icons(style="font-size:1.5em;") view_list
-          a.pull-right.mr-2(href="" title="Print Response")
+          a.pull-right.mr-2(href="" title="Print Response" @click.prevent="addPrints2Step()")
             i.material-icons(style="font-size:1.5em;") print
           a.pull-right.mr-2(href="" title="Collections")
             i.material-icons(style="font-size:1.5em;") collections_bookmark
-          a.pull-right.mr-2(href="" title="Delay")
+          a.pull-right.mr-2(href="" title="Delay" @click.prevent="addDelay2Step()")
             i.material-icons(style="font-size:1.5em;") timelapse
-          a.pull-right.mr-2(href="" title='Headers')
+          a.pull-right.mr-2(href="" title='Headers' @click.prevent="addHeader2Step()")
             i.fa.fa-header(style="font-size:1.3em;")
     .card-body
       .form-group.row
@@ -77,26 +77,28 @@
                           i.fa.fa-trash-o.fa-lg
                   a(href='', @click.prevent='addOverride()', title="Add Override")
                     i.material-icons(style="font-size:1.5em;") library_add
-      .form-group.row
-        label.col-2.col-form-label(for='') Delay
-        .col-sm-10
-          input.form-control(type='text', name='', v-model='step.delay')
+      template(v-if="step.delay != undefined")
+        .form-group.row
+          label.col-2.col-form-label(for='') Delay
+          .col-sm-10
+            input.form-control(type='text', name='', v-model='step.delay')
       .form-group.row
         label.col-2.col-form-label(for='') Iterate
         .col-10
           input.form-control(type='text', name='', v-model='step.iterate')
-      .form-group.row
-        label.col-sm-2.col-form-label(for='', name='') Print
-        .col-sm-10
-          template(v-for='(print, printIndex) in step.print')
-            .form-group.row
-              .col-11
-                input.form-control(v-model="step.print[printIndex]")
-              .col-1
-                a(href='', @click.prevent='removePrint(printIndex)', title="Remove Print")
-                  i.fa.fa-trash-o.fa-lg
-          a(href='', @click.prevent='addPrint()', title="Add Print Variables")
-            i.material-icons(style="font-size:1.5em;") library_add
+      template(v-if="true")
+        .form-group.row
+          label.col-sm-2.col-form-label(for='', name='') Print
+          .col-sm-10
+            template(v-for='(print, printIndex) in step.print')
+              .form-group.row
+                .col-11
+                  input.form-control(v-model="step.print[printIndex]")
+                .col-1
+                  a(href='', @click.prevent='removePrint(printIndex)', title="Remove Print")
+                    i.fa.fa-trash-o.fa-lg
+            a(href='', @click.prevent='addPrint()', title="Add Print Variables")
+              i.material-icons(style="font-size:1.5em;") library_add
       .form-group.row
         label.col-sm-2.col-form-label(for='', name='') Check
         .col-sm-10
@@ -248,6 +250,24 @@ export default {
       else if (this.step.type == "post" || this.step.type == "put")
         this.step[this.step.type] = postAndPutObj;
       else this.step[this.step.type] = localObj;
+    },
+    addPrints2Step(){
+      if (this.step.print == undefined) {
+        this.step.print = [];
+        this.$forceUpdate();
+      }
+    },
+    addDelay2Step(){
+      if (this.step.delay == undefined) {
+        this.step.delay = "";
+        this.$forceUpdate();
+      }
+    },
+    addHeader2Step() {
+      if (this.step[this.step.type].headers == undefined) {
+        this.step[this.step.type].headers = {};
+        this.$forceUpdate();
+      }
     },
     addHeader() {
       if (this.step[this.step.type].headers[""] == undefined) {

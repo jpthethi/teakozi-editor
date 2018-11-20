@@ -4,7 +4,7 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 var getAndDeleteObj = {
   url: "", //required to all
-  headers: {} // optional to all
+  //headers: {} // optional to all
 };
 
 var postAndPutObj = {
@@ -12,7 +12,7 @@ var postAndPutObj = {
   json: "", //optional to post, not to get
   file: "", //optional to post, not to get
   override: {}, // optional to post, not to get
-  headers: {} // optional to all
+  //headers: {} // optional to all
 };
 
 var localObj = {
@@ -36,7 +36,7 @@ var step = {
   type: "get", // added for convienience
   get: getAndDeleteObj, //required
   name: "", // required
-  delay: "", //needs to be string
+  //delay: "", //needs to be string
   print: [], //optional
   check: checkObj, //required
   collect: {}, //optional
