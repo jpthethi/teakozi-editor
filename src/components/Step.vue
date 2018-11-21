@@ -3,20 +3,47 @@
     .card-header
       .form-group.row.mb-0
         .col-12
-          a.red.pull-right(href='' title='Remove Step' @click.prevent='removeStep(stepIndex)')
-            i.fa.fa-trash-o.fa-lg
-          a.pull-right.mr-2(href="" title="Iterate")
-            i.material-icons(style="font-size:1.5em;") loop
-          a.pull-right.mr-2(href="" title="Check Response")
-            i.material-icons(style="font-size:1.5em;") view_list
-          a.pull-right.mr-2(href="" title="Print Response" @click.prevent="addPrints2Step()")
-            i.material-icons(style="font-size:1.5em;") print
-          a.pull-right.mr-2(href="" title="Collections")
-            i.material-icons(style="font-size:1.5em;") collections_bookmark
-          a.pull-right.mr-2(href="" title="Delay" @click.prevent="addDelay2Step()")
-            i.material-icons(style="font-size:1.5em;") timelapse
-          a.pull-right.mr-2(href="" title='Headers' @click.prevent="addHeader2Step()")
-            i.fa.fa-header(style="font-size:1.3em;")
+          nav.navbar.navbar-expand-md.navbar-light.bg-light.pull-right
+            ul.navbar-nav
+              template(v-if="(step.type == 'post' || step.type == 'put')")
+                li.nav-item.dropdown
+                  a.nav-link.mr-2.dropdown-toggle(href="" title="Post/Put Request Options" data-toggler="dropdown" aria-haspopup="true" aria-expanded="true"  @click.prevent="showPostOrPutOptions = !showPostOrPutOptions")
+                    i.material-icons(style="font-size:1.5em;") local_post_office
+                  .dropdown-menu(:class="showPostOrPutOptions?'show':''")
+                    a.dropdown-item(href="" @click.prevent="addOverride2Step()") Override
+                    a.dropdown-item(href="" @click.prevent="addJson2Step()") Json
+                    a.dropdown-item(href="" @click.prevent="addFile2Step()") File
+              li.nav-item
+                a.nav-link.mr-2(href="" title="Collections" @click.prevent="addCollect2Step()" :class="step.collect != undefined?'text-info':''")
+                  i.material-icons(style="font-size:1.5em;") collections_bookmark
+              li.nav-item
+                a.nav-link.mr-2(href="" title='Headers' @click.prevent="addHeader2Step()" :class="step[step.type].headers != undefined?'text-info':''")
+                  i.fa.fa-header(style="font-size:1.3em;")
+              li.nav-item
+                a.nav-link.mr-2(href="" title="Print Response" @click.prevent="addPrints2Step()" :class="step.print != undefined?'text-info':''")
+                  i.material-icons(style="font-size:1.5em;") print
+              li.nav-item.dropdown
+                a.nav-link.mr-2.dropdown-toggle#checkNavDropdown.text-info(href="" title="Check Response" data-toggler="dropdown" aria-haspopup="true" aria-expanded="false" role="button" @click.prevent="showCheckOptions = !showCheckOptions;")
+                  i.material-icons(style="font-size:1.5em;") view_list
+                .dropdown-menu(aria-labelledby="checkNavDropdown" :class="showCheckOptions?'show':''")
+                  a.dropdown-item(href="" @click.prevent="addSchema2Step()" :class="step.check.schema != undefined?'bg-info':''") Schema
+                  a.dropdown-item(href="" @click.prevent="addEQ2Step()" :class="step.check.body && (step.check.body.eq != undefined)?'bg-info':''") EQ
+                  a.dropdown-item(href="" @click.prevent="addNEQ2Step()" :class="step.check.body && (step.check.body.neq != undefined)?'bg-info':''") NEQ
+                  a.dropdown-item(href="" @click.prevent="addNULL2Step()" :class="step.check.body && (step.check.body.null != undefined)?'bg-info':''") NULL
+                  a.dropdown-item(href="" @click.prevent="addDeepEQ2Step()" :class="step.check.body && (step.check.body.deepEqual != undefined)?'bg-info':''") DEEP Equal
+                  a.dropdown-item(href="" @click.prevent="addRegex2Step()" :class="step.check.body && (step.check.body.regex != undefined)?'bg-info':''") REGEX
+              li.nav-item
+                a.nav-link.mr-2(href="" title="Iterate" @click.prevent="addIterate2Step()" :class="step.iterate != undefined?'text-info':''")
+                  i.material-icons(style="font-size:1.5em;") loop
+              li.nav-item
+                a.nav-link.mr-2(href="" title="Delay" @click.prevent="addDelay2Step()" :class="step.delay != undefined?'text-info':''")
+                  i.material-icons(style="font-size:1.5em;") timelapse
+              li.nav-item
+                a.nav-link.mr-2(href="" title="Skip On Error" @click.prevent="addSkipOnError2Step()" :class="step.skip_on_error != undefined?'text-info':''")
+                  i.material-icons(style="font-size:1.5em;") skip_next
+              li.nav-item
+                a.nav-link.red(href='' title='Remove Step' @click.prevent='removeStep(stepIndex)')
+                  i.fa.fa-trash-o.fa-lg
     .card-body
       .form-group.row
         label.col-sm-2.col-form-label(for='') Name
@@ -82,11 +109,12 @@
           label.col-2.col-form-label(for='') Delay
           .col-sm-10
             input.form-control(type='text', name='', v-model='step.delay')
-      .form-group.row
-        label.col-2.col-form-label(for='') Iterate
-        .col-10
-          input.form-control(type='text', name='', v-model='step.iterate')
-      template(v-if="true")
+      template(v-if="step.iterate != undefined")
+        .form-group.row
+          label.col-2.col-form-label(for='') Iterate
+          .col-10
+            input.form-control(type='text', name='', v-model='step.iterate')
+      template(v-if="step.print != undefined")
         .form-group.row
           label.col-sm-2.col-form-label(for='', name='') Print
           .col-sm-10
@@ -191,26 +219,28 @@
                                   i.fa.fa-trash-o.fa-lg
                           a(href='', @click.prevent='addRegexCheck()', title="Add Regex Check")
                             i.material-icons(style="font-size:1.5em;") library_add
-      .form-group.row
-        label.col-2.col-form-label Collect
-        .col-10
-          template(v-for='(collectVal, collectKey) in step.collect')
-            .form-group.row
-              .col-5
-                input.form-control(:value='collectKey', @focusout='addCollectKey($event.target.value)', placeholder='gist_id')
-              .col-5
-                input.form-control(v-model='step.collect[collectKey]', placeholder='$.id', @focusout='$forceUpdate()')
-              .col-2
-                a(href='', @click.prevent='removeCollect(collectKey)', title="Remove Collect")
-                  i.fa.fa-trash-o.fa-lg
-          a(href='', @click.prevent='addCollect()', title="Add Collect")
-            i.material-icons(style="font-size:1.5em;") library_add
-      .form-group.row
-        label.col-2.col-form-label Skip On Error
-        .col-10
-          select.form-control(v-model='step.skip_on_error')
-            option(value='true') TRUE
-            option(value='false') FALSE
+      template(v-if="step.collect != undefined")
+        .form-group.row
+          label.col-2.col-form-label Collect
+          .col-10
+            template(v-for='(collectVal, collectKey) in step.collect')
+              .form-group.row
+                .col-5
+                  input.form-control(:value='collectKey', @focusout='addCollectKey($event.target.value)', placeholder='gist_id')
+                .col-5
+                  input.form-control(v-model='step.collect[collectKey]', placeholder='$.id', @focusout='$forceUpdate()')
+                .col-2
+                  a(href='', @click.prevent='removeCollect(collectKey)', title="Remove Collect")
+                    i.fa.fa-trash-o.fa-lg
+            a(href='', @click.prevent='addCollect()', title="Add Collect")
+              i.material-icons(style="font-size:1.5em;") library_add
+      template(v-if="step.skip_on_error != undefined")
+        .form-group.row
+          label.col-2.col-form-label Skip On Error
+          .col-10
+            select.form-control(v-model='step.skip_on_error')
+              option(value='true') TRUE
+              option(value='false') FALSE
 
 </template>
 
@@ -226,7 +256,10 @@ const YAML = require("js-yaml");
 export default {
   props: ["step", "stepIndex", "tests"],
   data: function() {
-    return {};
+    return {
+      showCheckOptions: false,
+      showPostOrPutOptions: false
+    };
   },
   updated() {
     console.log(
@@ -244,6 +277,11 @@ export default {
       delete this.step.post;
       delete this.step.put;
       delete this.step.delete;
+      delete this.step.local;
+      getAndDeleteObj = {};
+      getAndDeleteObj.url = "";
+      postAndPutObj = {};
+      postAndPutObj.url = "";
 
       if (this.step.type == "get" || this.step.type == "delete")
         this.step[step.type] = getAndDeleteObj;
@@ -251,23 +289,141 @@ export default {
         this.step[this.step.type] = postAndPutObj;
       else this.step[this.step.type] = localObj;
     },
-    addPrints2Step(){
-      if (this.step.print == undefined) {
-        this.step.print = [];
+    addEQ2Step() {
+      this.addBody2Step();
+      if (this.step.check.body.eq == undefined) {
+        this.step.check.body.eq = {};
+      } else {
+        delete this.step.check.body.eq;
+      }
+      this.$forceUpdate();
+    },
+    addNEQ2Step() {
+      this.addBody2Step();
+      if (this.step.check.body.neq == undefined) {
+        this.step.check.body.neq = {};
+      } else {
+        delete this.step.check.body.neq;
+      }
+      this.$forceUpdate();
+    },
+    addNULL2Step() {
+      this.addBody2Step();
+      if (this.step.check.body.null == undefined) {
+        this.step.check.body.null = [];
+      } else {
+        delete this.step.check.body.null;
+      }
+      this.$forceUpdate();
+    },
+    addDeepEQ2Step() {
+      this.addBody2Step();
+      if (this.step.check.body.deepEqual == undefined) {
+        this.step.check.body.deepEqual = {};
+      } else {
+        delete this.step.check.body.deepEqual;
+      }
+      this.$forceUpdate();
+    },
+    addRegex2Step() {
+      this.addBody2Step();
+      if (this.step.check.body.regex == undefined) {
+        this.step.check.body.regex = {};
+      } else {
+        delete this.step.check.body.regex;
+      }
+      this.$forceUpdate();
+    },
+    addSchema2Step() {
+      if (this.step.check.schema == undefined) {
+        this.step.check.schema = "";
+      } else {
+        delete this.step.check.schema;
+      }
+      this.$forceUpdate();
+    },
+    addBody2Step() {
+      if (
+        this.step.check.body != undefined &&
+        this.step.check.body.eq == undefined &&
+        this.step.check.body.neq == undefined &&
+        this.step.check.body.deepEqual == undefined &&
+        this.step.check.body.null == undefined &&
+        this.step.check.body.regex == undefined
+      ) {
+        delete this.step.check.body;
+      } else if (this.step.check.body == undefined) {
+        this.step.check.body = {};
+      } else {
+        console.log("addBody2Step else condition");
+      }
+      this.$forceUpdate();
+    },
+    addOverride2Step() {
+      if (this.step[this.step.type].override == undefined) {
+        this.step[this.step.type].override = {};
         this.$forceUpdate();
       }
     },
-    addDelay2Step(){
-      if (this.step.delay == undefined) {
-        this.step.delay = "";
+    addJson2Step() {
+      if (this.step[this.step.type].json == undefined) {
+        this.step[this.step.type].json = "";
         this.$forceUpdate();
       }
+    },
+    addFile2Step() {
+      if (this.step[this.step.type].file == undefined) {
+        this.step[this.step.type].file = "";
+        this.$forceUpdate();
+      }
+    },
+    addPrints2Step() {
+      if (this.step.print == undefined) {
+        this.step.print = [];
+      } else {
+        delete this.step.print;
+      }
+      this.$forceUpdate();
+    },
+    addSkipOnError2Step() {
+      if (this.step.skip_on_error == undefined) {
+        this.step.skip_on_error = true;
+      } else {
+        delete this.step.skip_on_error;
+      }
+      this.$forceUpdate();
+    },
+    addIterate2Step() {
+      if (this.step.iterate == undefined) {
+        this.step.iterate = "";
+      } else {
+        delete this.step.iterate;
+      }
+      this.$forceUpdate();
+    },
+    addDelay2Step() {
+      if (this.step.delay == undefined) {
+        this.step.delay = "";
+      } else {
+        delete this.step.delay;
+      }
+      this.$forceUpdate();
+    },
+    addCollect2Step() {
+      if (this.step.collect == undefined) {
+        this.step.collect = {};
+      } else {
+        delete this.step.collect;
+      }
+      this.$forceUpdate();
     },
     addHeader2Step() {
       if (this.step[this.step.type].headers == undefined) {
         this.step[this.step.type].headers = {};
-        this.$forceUpdate();
+      } else {
+        delete this.step[this.step.type].headers;
       }
+      this.$forceUpdate();
     },
     addHeader() {
       if (this.step[this.step.type].headers[""] == undefined) {
@@ -308,6 +464,7 @@ export default {
     },
     addPrint() {
       this.step.print.push("");
+      this.$forceUpdate();
     },
     addCollect() {
       if (this.step.collect[""] == undefined) {
@@ -362,9 +519,11 @@ export default {
     },
     removeNull(nullIndex) {
       this.step.check.body.null.splice(nullIndex, 1);
+      this.$forceUpdate();
     },
     addNull() {
       this.step.check.body.null.push("");
+      this.$forceUpdate();
     },
     removeDeepEqCheck(key) {
       delete this.step.check.body.deepEqual[key];

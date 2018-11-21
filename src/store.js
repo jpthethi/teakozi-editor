@@ -9,9 +9,9 @@ var getAndDeleteObj = {
 
 var postAndPutObj = {
   url: "", //required to all
-  json: "", //optional to post, not to get
-  file: "", //optional to post, not to get
-  override: {}, // optional to post, not to get
+  //json: "", //optional to post, not to get
+  //file: "", //optional to post, not to get
+  //override: {}, // optional to post, not to get
   //headers: {} // optional to all
 };
 
@@ -22,14 +22,14 @@ var localObj = {
 var checkObj = {
   //all are optional
   status: 200,
-  schema: "",
-  body: {
-    eq: {},
-    neq: {},
-    null: [],
-    deepEqual: {},
-    regex: {}
-  }
+  //schema: "",
+  //body: {
+    //eq: {},
+    //neq: {},
+    //null: [],
+    //deepEqual: {},
+    //regex: {}
+  //}
 };
 
 var step = {
@@ -37,10 +37,11 @@ var step = {
   get: getAndDeleteObj, //required
   name: "", // required
   //delay: "", //needs to be string
-  print: [], //optional
+  //print: [], //optional
   check: checkObj, //required
-  collect: {}, //optional
-  skip_on_error: true //optional
+  //collect: {}, //optional
+  //skip_on_error: true //optional
+  //iterate: "" //optional
 };
 
 var tests = {
