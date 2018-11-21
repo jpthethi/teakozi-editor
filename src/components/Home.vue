@@ -13,26 +13,44 @@
         .col-sm-4
           input.form-control-file.btn.btn-info(type='file', @change='onFileUploaded')
       .form-group.row
-        label.col-sm-2.col-form-label(for='') Name
-        .col-sm-10
-          input.form-control(type='text', v-model='tests.name', placeholder='Eg: Tetst 1')
-      .form-group.row
-        label.col-sm-2.col-form-label(for='') Tags
-        .col-sm-10
-          input.form-control(type='text', placeholder='Eg: github, need_local_server', v-model='tests.tags')
-      .form-group.row
-        label.col-sm-2.col-form-label(for='') Iterate
-        .col-sm-10
-          input.form-control(type='text', v-model='tests.iterate', placeholder='Eg: many_runs')
-      .form-group.row
-        label.col-2.col-form-label(for='') Steps
-        .col-10
-          template(v-for='(step, stepIndex) in tests.steps')
-            app-step.mb-5(v-bind:step='step' v-bind:step-index="stepIndex" v-bind:tests="tests" @stepUpdated="stepUpdated")
-          .form-group.row.mt-2
-            .col-12
-              a(href='', @click.prevent='addStep()', title='Add Step')
-                i.material-icons(style="font-size:1.5em;") library_add
+        .col-12
+          .card
+            .card-header
+              nav.navbar.navbar-expand-md.navbar-light.bg-light.pull-right
+                ul.navbar-nav
+                  li.nav-item
+                    a.nav-link.mr-2(href="" title="Iterate" @click.prevent="addIterate2Tests()" :class="tests.iterate != undefined?'text-info':''")
+                      i.material-icons(style="font-size:1.5em;") loop
+                  li.nav-item
+                    a.nav-link.mr-2(href="" title="Tags" @click.prevent="addTags()" :class="tests.tags != undefined?'text-info':''")
+                      i.material-icons(style="font-size:1.5em;") local_offer
+                  li.nav-item
+                    a.nav-link.mr-2(:href="'data:application/octet-stream,'+JSON.stringify(tests)" title="Download YML File" download="test.yml")
+                      i.fa.fa-download.fa-lg
+            .card-body
+              .form-group.row
+                label.col-sm-2.col-form-label(for='') Name
+                .col-sm-10
+                  input.form-control(type='text', v-model='tests.name', placeholder='Eg: Tetst 1')
+              template(v-if="tests.tags != undefined")
+                .form-group.row
+                  label.col-sm-2.col-form-label(for='') Tags
+                  .col-sm-10
+                    input.form-control(type='text', placeholder='Eg: github, need_local_server', v-model='tests.tags')
+              template(v-if="tests.iterate != undefined")
+                .form-group.row
+                  label.col-sm-2.col-form-label(for='') Iterate
+                  .col-sm-10
+                    input.form-control(type='text', v-model='tests.iterate', placeholder='Eg: many_runs')
+              .form-group.row
+                label.col-2.col-form-label(for='') Steps
+                .col-10
+                  template(v-for='(step, stepIndex) in tests.steps')
+                    app-step.mb-5(v-bind:step='step' v-bind:step-index="stepIndex" v-bind:tests="tests" @stepUpdated="stepUpdated")
+                  .form-group.row.mt-2
+                    .col-12
+                      a(href='', @click.prevent='addStep()', title='Add Step')
+                        i.material-icons(style="font-size:1.5em;") library_add
 </template>
 
 <script>
@@ -76,6 +94,34 @@ export default {
         });
     },
     deleteProject() {},
+    downloadYAML(e) {
+      //console.log("e is :::: ", e);
+      // e.target
+      //   .closest("a")
+      //   .setAttribute("href", "data:application/octet-stream,I'm sandeep");
+      var link = document.createElement("a");
+      link.setAttribute("href", "data:application/octet-stream,I'm sandeep");
+      link.setAttribute("download", "test.yml");
+      e.target.parentElement.appendChild(link);
+      link.click();
+      e.target.parentElement.removeChild(link);
+    },
+    addTags() {
+      if (this.tests.tags == undefined) {
+        this.tests.tags = "";
+      } else {
+        delete this.tests.tags;
+      }
+      this.$forceUpdate();
+    },
+    addIterate2Tests() {
+      if (this.tests.iterate == undefined) {
+        this.tests.iterate = "";
+      } else {
+        delete this.tests.iterate;
+      }
+      this.$forceUpdate();
+    },
     addStep() {
       console.log("============  ", JSON.stringify(this.step));
       this.tests.steps.push(_.cloneDeep(this.step));

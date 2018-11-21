@@ -295,6 +295,7 @@ export default {
         this.step.check.body.eq = {};
       } else {
         delete this.step.check.body.eq;
+        this.removeBodyFromStep();
       }
       this.$forceUpdate();
     },
@@ -304,6 +305,7 @@ export default {
         this.step.check.body.neq = {};
       } else {
         delete this.step.check.body.neq;
+        this.removeBodyFromStep();
       }
       this.$forceUpdate();
     },
@@ -313,6 +315,7 @@ export default {
         this.step.check.body.null = [];
       } else {
         delete this.step.check.body.null;
+        this.removeBodyFromStep();
       }
       this.$forceUpdate();
     },
@@ -322,6 +325,7 @@ export default {
         this.step.check.body.deepEqual = {};
       } else {
         delete this.step.check.body.deepEqual;
+        this.removeBodyFromStep();
       }
       this.$forceUpdate();
     },
@@ -331,31 +335,25 @@ export default {
         this.step.check.body.regex = {};
       } else {
         delete this.step.check.body.regex;
+        this.removeBodyFromStep();
       }
       this.$forceUpdate();
+    },
+    addBody2Step() {
+      if (this.step.check.body == undefined) {
+        this.step.check.body = {};
+      }
+    },
+    removeBodyFromStep() {
+      if (Object.keys(this.step.check.body).length < 1) {
+        delete this.step.check.body;
+      }
     },
     addSchema2Step() {
       if (this.step.check.schema == undefined) {
         this.step.check.schema = "";
       } else {
         delete this.step.check.schema;
-      }
-      this.$forceUpdate();
-    },
-    addBody2Step() {
-      if (
-        this.step.check.body != undefined &&
-        this.step.check.body.eq == undefined &&
-        this.step.check.body.neq == undefined &&
-        this.step.check.body.deepEqual == undefined &&
-        this.step.check.body.null == undefined &&
-        this.step.check.body.regex == undefined
-      ) {
-        delete this.step.check.body;
-      } else if (this.step.check.body == undefined) {
-        this.step.check.body = {};
-      } else {
-        console.log("addBody2Step else condition");
       }
       this.$forceUpdate();
     },

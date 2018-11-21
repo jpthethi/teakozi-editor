@@ -24,11 +24,11 @@ var checkObj = {
   status: 200,
   //schema: "",
   //body: {
-    //eq: {},
-    //neq: {},
-    //null: [],
-    //deepEqual: {},
-    //regex: {}
+  //eq: {},
+  //neq: {},
+  //null: [],
+  //deepEqual: {},
+  //regex: {}
   //}
 };
 
@@ -46,8 +46,8 @@ var step = {
 
 var tests = {
   name: "",
-  tags: "",
-  iterate: "",
+  //tags: "",
+  //iterate: "",
   steps: []
 };
 export default new Vuex.Store({
