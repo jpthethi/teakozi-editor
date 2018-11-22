@@ -26,7 +26,7 @@
                       i.material-icons(style="font-size:1.5em;") local_offer
                   li.nav-item
                     a.nav-link.mr-2(href="" title="Download YML File" @click.prevent="downloadYAML()")
-                      i.fa.fa-download.fa-lg
+                      i.material-icons(style="font-size:1.5em;") file_download
             .card-body
               .form-group.row
                 label.col-sm-2.col-form-label(for='') Name
@@ -97,10 +97,8 @@ export default {
     deleteProject() {},
     downloadYAML(e) {
       let yamlTests = _.cloneDeep(this.tests);
-      delete yamlTests.iterate;
       yamlTests.steps.filter(step => {
         delete step.type;
-        delete step.iterate;
         return true;
       });
       let yamlStr = YAML.safeDump(yamlTests);
@@ -139,6 +137,7 @@ export default {
       let reader = new FileReader();
       reader.onload = event => {
         let doc = YAML.safeLoad(event.target.result);
+        console.log("Converted JSON is :::: ", doc);
         doc = this.getValidDoc(doc);
         this.tests = doc;
       };
@@ -159,59 +158,10 @@ export default {
         } else if (step.local != undefined) {
           step.type = "local";
         } else {
-          //console.log("wrong YAML");
+          console.log("wrong YAML");
         }
-        step = this.getValidStep(step);
-        step[step.type] = this.getValidStepType(step.type, step[step.type]);
-        step.check = this.getValidCheck(step.check);
-        step.check.body = this.getValidCheckBody(step.check.body);
       }
       return tests;
-    },
-    getValidStep(stepObj) {
-      let requiredKeys = Object.keys(step);
-      for (var key of requiredKeys) {
-        if (stepObj[key] == undefined) {
-          stepObj[key] = step[key];
-        }
-      }
-      return step;
-    },
-    getValidStepType(stepType, stepTypeObj) {
-      if (["get", "delete"].includes(stepType)) {
-        let requiredKeys = Object.keys(getAndDeleteObj);
-        for (var key of requiredKeys) {
-          if (stepTypeObj[key] == undefined) {
-            stepTypeObj[key] = getAndDeleteObj[key];
-          }
-        }
-      } else {
-        let requiredKeys = Object.keys(postAndPutObj);
-        for (var key in requiredKeys) {
-          if (stepTypeObj[key] == undefined) {
-            stepTypeObj[key] = postAndPutObj[key];
-          }
-        }
-      }
-      return stepTypeObj;
-    },
-    getValidCheck(stepCheckObj) {
-      let requiredKeys = Object.keys(checkObj);
-      for (var key of requiredKeys) {
-        if (stepCheckObj[key] == undefined) {
-          stepCheckObj[key] = checkObj[key];
-        }
-      }
-      return stepCheckObj;
-    },
-    getValidCheckBody(stepCheckBodyObj) {
-      let requiredKeys = Object.keys(checkObj.body);
-      for (var key of requiredKeys) {
-        if (stepCheckBodyObj[key] == undefined) {
-          stepCheckBodyObj[key] = checkObj.body[key];
-        }
-      }
-      return stepCheckBodyObj;
     },
     getLog() {
       let yamlTests = _.cloneDeep(this.tests);
