@@ -25,7 +25,7 @@
                     a.nav-link.mr-2(href="" title="Tags" @click.prevent="addTags()" :class="tests.tags != undefined?'text-info':''")
                       i.material-icons(style="font-size:1.5em;") local_offer
                   li.nav-item
-                    a.nav-link.mr-2(:href="'data:application/octet-stream,'+JSON.stringify(tests)" title="Download YML File" download="test.yml")
+                    a.nav-link.mr-2(href="" title="Download YML File" @click.prevent="downloadYAML()")
                       i.fa.fa-download.fa-lg
             .card-body
               .form-group.row
@@ -36,12 +36,12 @@
                 .form-group.row
                   label.col-sm-2.col-form-label(for='') Tags
                   .col-sm-10
-                    input.form-control(type='text', placeholder='Eg: github, need_local_server', v-model='tests.tags')
+                    input.form-control(type='text' placeholder='Eg: github, need_local_server' v-model='tests.tags' @focusout="$forceUpdate()")
               template(v-if="tests.iterate != undefined")
                 .form-group.row
                   label.col-sm-2.col-form-label(for='') Iterate
                   .col-sm-10
-                    input.form-control(type='text', v-model='tests.iterate', placeholder='Eg: many_runs')
+                    input.form-control(type='text' v-model='tests.iterate' placeholder='Eg: many_runs' @focusout="$forceUpdate()")
               .form-group.row
                 label.col-2.col-form-label(for='') Steps
                 .col-10
@@ -57,6 +57,7 @@
 import Step from "./Step.vue";
 import Store from "../store.js";
 import Axios from "axios";
+import FileSaver from "file-saver";
 
 var tests;
 var step = Store.state.step;
@@ -95,16 +96,16 @@ export default {
     },
     deleteProject() {},
     downloadYAML(e) {
-      //console.log("e is :::: ", e);
-      // e.target
-      //   .closest("a")
-      //   .setAttribute("href", "data:application/octet-stream,I'm sandeep");
-      var link = document.createElement("a");
-      link.setAttribute("href", "data:application/octet-stream,I'm sandeep");
-      link.setAttribute("download", "test.yml");
-      e.target.parentElement.appendChild(link);
-      link.click();
-      e.target.parentElement.removeChild(link);
+      let yamlTests = _.cloneDeep(this.tests);
+      delete yamlTests.iterate;
+      yamlTests.steps.filter(step => {
+        delete step.type;
+        delete step.iterate;
+        return true;
+      });
+      let yamlStr = YAML.safeDump(yamlTests);
+      const blob = new Blob([yamlStr], {type: "text/plain;charset=urf-8"});
+      FileSaver.saveAs(blob, "test.yml");
     },
     addTags() {
       if (this.tests.tags == undefined) {

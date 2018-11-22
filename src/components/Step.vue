@@ -48,7 +48,7 @@
       .form-group.row
         label.col-sm-2.col-form-label(for='') Name
         .col-sm-10
-          input.form-control(type='text', v-model='step.name')
+          input.form-control(type='text', v-model='step.name' @focusout="$forceUpdate()")
       .form-group.row
         .col-sm-2
           select.form-control(v-model='step.type', @change='stepTypeChanged(step)')
@@ -108,12 +108,12 @@
         .form-group.row
           label.col-2.col-form-label(for='') Delay
           .col-sm-10
-            input.form-control(type='text', name='', v-model='step.delay')
+            input.form-control(type='text', name='', v-model='step.delay' @focusout="$forceUpdate()")
       template(v-if="step.iterate != undefined")
         .form-group.row
           label.col-2.col-form-label(for='') Iterate
           .col-10
-            input.form-control(type='text', name='', v-model='step.iterate')
+            input.form-control(type='text', name='', v-model='step.iterate' @focusout="$forceUpdate()")
       template(v-if="step.print != undefined")
         .form-group.row
           label.col-sm-2.col-form-label(for='', name='') Print
@@ -121,7 +121,7 @@
             template(v-for='(print, printIndex) in step.print')
               .form-group.row
                 .col-11
-                  input.form-control(v-model="step.print[printIndex]")
+                  input.form-control(v-model="step.print[printIndex]" @focusout="$forceUpdate()")
                 .col-1
                   a(href='', @click.prevent='removePrint(printIndex)', title="Remove Print")
                     i.fa.fa-trash-o.fa-lg
@@ -135,12 +135,12 @@
               .form-group.row
                 label.col-sm-2.col-form-label(for='', name='') Status
                 .col-sm-10
-                  input.form-control(type='text', name='', v-model='step.check.status')
+                  input.form-control(type='text', name='', v-model='step.check.status' @focusout="$forceUpdate()")
             template(v-if="checkKey == 'schema'")
               .form-group.row
                 label.col-2.col-form-label(for='') Schema
                 .col-10
-                  input.form-control(type='text', name='', v-model='step.check.schema')
+                  input.form-control(type='text', name='', v-model='step.check.schema' @focusout="$forceUpdate()")
             template(v-if="checkKey == 'body'")
               .form-group.row
                 label.col-2.col-form-label Body
