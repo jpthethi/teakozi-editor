@@ -15,4 +15,11 @@ export default {
 </script>
 
 <style lang="scss">
+body {
+  background-color: #fafafa;
+}
+
+.box-shadow {
+  box-shadow: 0px 0px 14px #888888;
+}
 </style>

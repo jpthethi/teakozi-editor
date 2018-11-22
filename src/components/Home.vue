@@ -13,33 +13,51 @@
         .col-sm-4
           input.form-control-file.btn.btn-info(type='file', @change='onFileUploaded')
       .form-group.row
-        label.col-sm-2.col-form-label(for='') Name
-        .col-sm-10
-          input.form-control(type='text', v-model='tests.name', placeholder='Eg: Tetst 1')
-      .form-group.row
-        label.col-sm-2.col-form-label(for='') Tags
-        .col-sm-10
-          input.form-control(type='text', placeholder='Eg: github, need_local_server', v-model='tests.tags')
-      .form-group.row
-        label.col-sm-2.col-form-label(for='') Iterate
-        .col-sm-10
-          input.form-control(type='text', v-model='tests.iterate', placeholder='Eg: many_runs')
-      .form-group.row
-        label.col-2.col-form-label(for='') Steps
-        .col-10
-          template(v-for='(step, stepIndex) in tests.steps')
-            app-step(v-bind:step='step' v-bind:step-index="stepIndex" v-bind:tests="tests" @stepUpdated="stepUpdated")
-            hr
-          .form-group.row.mt-2
-            .col-12
-              a(href='', @click.prevent='addStep()', title='Add Step')
-                i.fa.fa-plus-square-o.fa-lg
+        .col-12
+          .card
+            .card-header
+              nav.navbar.navbar-expand-md.navbar-light.bg-light.pull-right
+                ul.navbar-nav
+                  li.nav-item
+                    a.nav-link.mr-2(href="" title="Iterate" @click.prevent="addIterate2Tests()" :class="tests.iterate != undefined?'text-info':''")
+                      i.material-icons(style="font-size:1.5em;") loop
+                  li.nav-item
+                    a.nav-link.mr-2(href="" title="Tags" @click.prevent="addTags()" :class="tests.tags != undefined?'text-info':''")
+                      i.material-icons(style="font-size:1.5em;") local_offer
+                  li.nav-item
+                    a.nav-link.mr-2(href="" title="Download YML File" @click.prevent="downloadYAML()")
+                      i.fa.fa-download.fa-lg
+            .card-body
+              .form-group.row
+                label.col-sm-2.col-form-label(for='') Name
+                .col-sm-10
+                  input.form-control(type='text', v-model='tests.name', placeholder='Eg: Tetst 1')
+              template(v-if="tests.tags != undefined")
+                .form-group.row
+                  label.col-sm-2.col-form-label(for='') Tags
+                  .col-sm-10
+                    input.form-control(type='text' placeholder='Eg: github, need_local_server' v-model='tests.tags' @focusout="$forceUpdate()")
+              template(v-if="tests.iterate != undefined")
+                .form-group.row
+                  label.col-sm-2.col-form-label(for='') Iterate
+                  .col-sm-10
+                    input.form-control(type='text' v-model='tests.iterate' placeholder='Eg: many_runs' @focusout="$forceUpdate()")
+              .form-group.row
+                label.col-2.col-form-label(for='') Steps
+                .col-10
+                  template(v-for='(step, stepIndex) in tests.steps')
+                    app-step.mb-5(v-bind:step='step' v-bind:step-index="stepIndex" v-bind:tests="tests" @stepUpdated="stepUpdated")
+                  .form-group.row.mt-2
+                    .col-12
+                      a(href='', @click.prevent='addStep()', title='Add Step')
+                        i.material-icons(style="font-size:1.5em;") library_add
 </template>
 
 <script>
 import Step from "./Step.vue";
 import Store from "../store.js";
 import Axios from "axios";
+import FileSaver from "file-saver";
 
 var tests;
 var step = Store.state.step;
@@ -77,6 +95,34 @@ export default {
         });
     },
     deleteProject() {},
+    downloadYAML(e) {
+      let yamlTests = _.cloneDeep(this.tests);
+      delete yamlTests.iterate;
+      yamlTests.steps.filter(step => {
+        delete step.type;
+        delete step.iterate;
+        return true;
+      });
+      let yamlStr = YAML.safeDump(yamlTests);
+      const blob = new Blob([yamlStr], {type: "text/plain;charset=urf-8"});
+      FileSaver.saveAs(blob, "test.yml");
+    },
+    addTags() {
+      if (this.tests.tags == undefined) {
+        this.tests.tags = "";
+      } else {
+        delete this.tests.tags;
+      }
+      this.$forceUpdate();
+    },
+    addIterate2Tests() {
+      if (this.tests.iterate == undefined) {
+        this.tests.iterate = "";
+      } else {
+        delete this.tests.iterate;
+      }
+      this.$forceUpdate();
+    },
     addStep() {
       console.log("============  ", JSON.stringify(this.step));
       this.tests.steps.push(_.cloneDeep(this.step));
@@ -212,4 +258,9 @@ export default {
 .project-row:hover .delete-project {
   opacity: 1;
 }
+//@import "../../node_modules/bootstrap/scss/_variables";
+$theme-colors: (
+  "primary": #d95700
+);
+@import "../../node_modules/bootstrap/scss/bootstrap";
 </style>
