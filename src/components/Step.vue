@@ -5,26 +5,18 @@
         .col-12
           nav.navbar.navbar-expand-md.navbar-light.bg-light.pull-right
             ul.navbar-nav
-              template(v-if="(step.type == 'post' || step.type == 'put')")
-                li.nav-item.dropdown
-                  a.nav-link.mr-2.dropdown-toggle(href="" title="Post/Put Request Options" data-toggler="dropdown" aria-haspopup="true" aria-expanded="true"  @click.prevent="showPostOrPutOptions = !showPostOrPutOptions")
-                    i.material-icons(style="font-size:1.5em;") local_post_office
-                  .dropdown-menu(:class="showPostOrPutOptions?'show':''")
-                    a.dropdown-item(href="" @click.prevent="addOverride2Step()") Override
-                    a.dropdown-item(href="" @click.prevent="addJson2Step()") Json
-                    a.dropdown-item(href="" @click.prevent="addFile2Step()") File
-              li.nav-item
-                a.nav-link.mr-2(href="" title="Collections" @click.prevent="addCollect2Step()" :class="step.collect != undefined?'text-info':''")
-                  i.material-icons(style="font-size:1.5em;") collections_bookmark
-              li.nav-item
-                a.nav-link.mr-2(href="" title='Headers' @click.prevent="addHeader2Step()" :class="step[step.type].headers != undefined?'text-info':''")
-                  i.fa.fa-header(style="font-size:1.3em;")
-              li.nav-item
-                a.nav-link.mr-2(href="" title="Print Response" @click.prevent="addPrints2Step()" :class="step.print != undefined?'text-info':''")
-                  i.material-icons(style="font-size:1.5em;") print
               li.nav-item.dropdown
-                a.nav-link.mr-2.dropdown-toggle#checkNavDropdown.text-info(href="" title="Check Response" data-toggler="dropdown" aria-haspopup="true" aria-expanded="false" role="button" @click.prevent="showCheckOptions = !showCheckOptions;")
-                  i.material-icons(style="font-size:1.5em;") view_list
+                a.nav-link.mr-2.dropdown-toggle.text-info(href="" title="HTTP Request Options" data-toggler="dropdown" aria-haspopup="true" aria-expanded="true"  @click.prevent="showHttpReqOptions = !showHttpReqOptions")
+                  i.material-icons(style="font-size:1.5em;") send
+                .dropdown-menu(:class="showHttpReqOptions?'show':''")
+                  a.dropdown-item(href="" @click.prevent="addHeader2Step()" :class="step[step.type].headers != undefined?'bg-info':''") Headers
+                  template(v-if="(step.type == 'post' || step.type == 'put')")
+                    a.dropdown-item(href="" @click.prevent="addOverride2Step()" :class="step[step.type].override != undefined?'bg-info':''") Override
+                    a.dropdown-item(href="" @click.prevent="addJson2Step()" :class="step[step.type].json != undefined?'bg-info':''") Json
+                    a.dropdown-item(href="" @click.prevent="addFile2Step()" :class="step[step.type].file != undefined?'bg-info':''") File
+              li.nav-item.dropdown
+                a.nav-link.mr-2.dropdown-toggle#checkNavDropdown.text-info(href="" title="HTTP Response Options" data-toggler="dropdown" aria-haspopup="true" aria-expanded="false" role="button" @click.prevent="showCheckOptions = !showCheckOptions;")
+                  i.material-icons(style="font-size:1.5em;") reply
                 .dropdown-menu(aria-labelledby="checkNavDropdown" :class="showCheckOptions?'show':''")
                   a.dropdown-item(href="" @click.prevent="addSchema2Step()" :class="step.check.schema != undefined?'bg-info':''") Schema
                   a.dropdown-item(href="" @click.prevent="addEQ2Step()" :class="step.check.body && (step.check.body.eq != undefined)?'bg-info':''") EQ
@@ -32,6 +24,12 @@
                   a.dropdown-item(href="" @click.prevent="addNULL2Step()" :class="step.check.body && (step.check.body.null != undefined)?'bg-info':''") NULL
                   a.dropdown-item(href="" @click.prevent="addDeepEQ2Step()" :class="step.check.body && (step.check.body.deepEqual != undefined)?'bg-info':''") DEEP Equal
                   a.dropdown-item(href="" @click.prevent="addRegex2Step()" :class="step.check.body && (step.check.body.regex != undefined)?'bg-info':''") REGEX
+              li.nav-item
+                a.nav-link.mr-2(href="" title="Collections" @click.prevent="addCollect2Step()" :class="step.collect != undefined?'text-info':''")
+                  i.material-icons(style="font-size:1.5em;") collections_bookmark
+              li.nav-item
+                a.nav-link.mr-2(href="" title="Print Response" @click.prevent="addPrints2Step()" :class="step.print != undefined?'text-info':''")
+                  i.material-icons(style="font-size:1.5em;") print
               li.nav-item
                 a.nav-link.mr-2(href="" title="Iterate" @click.prevent="addIterate2Step()" :class="step.iterate != undefined?'text-info':''")
                   i.material-icons(style="font-size:1.5em;") loop
@@ -43,7 +41,8 @@
                   i.material-icons(style="font-size:1.5em;") skip_next
               li.nav-item
                 a.nav-link.red(href='' title='Remove Step' @click.prevent='removeStep(stepIndex)')
-                  i.fa.fa-trash-o.fa-lg
+                  i.material-icons(style="font-size:1.5em;") delete
+
     .card-body
       .form-group.row
         label.col-sm-2.col-form-label(for='') Name
@@ -258,7 +257,7 @@ export default {
   data: function() {
     return {
       showCheckOptions: false,
-      showPostOrPutOptions: false
+      showHttpReqOptions: false
     };
   },
   updated() {
@@ -360,20 +359,26 @@ export default {
     addOverride2Step() {
       if (this.step[this.step.type].override == undefined) {
         this.step[this.step.type].override = {};
-        this.$forceUpdate();
+      } else {
+        delete this.step[this.step.type].override;
       }
+      this.$forceUpdate();
     },
     addJson2Step() {
       if (this.step[this.step.type].json == undefined) {
         this.step[this.step.type].json = "";
-        this.$forceUpdate();
+      } else {
+        delete this.step[this.step.type].json;
       }
+      this.$forceUpdate();
     },
     addFile2Step() {
       if (this.step[this.step.type].file == undefined) {
         this.step[this.step.type].file = "";
-        this.$forceUpdate();
+      } else {
+        delete this.step[this.step.type].file;
       }
+      this.$forceUpdate();
     },
     addPrints2Step() {
       if (this.step.print == undefined) {
