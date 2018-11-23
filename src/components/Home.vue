@@ -212,5 +212,5 @@ export default {
 $theme-colors: (
   "primary": #d95700
 );
-@import "../../node_modules/bootstrap/scss/bootstrap";
+//@import "../../node_modules/bootstrap/scss/bootstrap";
 </style>
