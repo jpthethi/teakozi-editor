@@ -4,12 +4,8 @@ const mkdirp = require("mkdirp");
 const fs = require("fs");
 const teakozi = require("teakozi");
 
-router.get("/*", (req, res)=>{
-    console.log("__dirname  ::::: ",__dirname);
-    console.log("process.env.NODE_ENV :::::::::: ",process.env.NODE_ENV);
-    //res.render(path.join(__dirname+"/dist/index.html"));
-    //res.sendFile("index.html", {root: __dirname+"/dist"});
-    res.sendFile(__dirname+"/dist/index.html");
+router.get("/*", (req, res) => {
+    res.sendFile("index.html");
 });
 
 router.get("/api", (req, res) => {
