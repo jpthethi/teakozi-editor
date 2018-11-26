@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import Axios from 'axios';
 
 Vue.use(Vuex);
 var getAndDeleteObj = {
@@ -58,16 +59,31 @@ export default new Vuex.Store({
     postAndPutObj,
     localObj,
     checkObj,
+    projectName: '',
+    projects: []
   },
   mutations: {
     testsUpdated(state, tests) {
       state.tests = tests;
+    },
+    SET_PROJECT_NAME(state, projectName){
+      state.projectName = projectName;
+    },
+    SET_PROJECTS(state, projects){
+      state.projects = projects;
     }
   },
   actions: {
-
+    getProjects(context){
+      Axios.get("/api/projects")
+      .then((res)=> {
+        context.commit("SET_PROJECTS",res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    }
   },
   getters: {
-
   }
 });

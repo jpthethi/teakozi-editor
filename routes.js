@@ -4,8 +4,48 @@ const mkdirp = require("mkdirp");
 const fs = require("fs");
 const teakozi = require("teakozi");
 
-router.get("/*", (req, res) => {
+const writeFile = (filePath, content) => {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(filePath, content, 'utf-8', err => {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
+};
+
+const readDirs = (dir) => {
+    return new Promise((resolve, reject)=>{
+        fs.readdir(dir, (err, list)=>{
+            if(err) return reject(err);
+            else resolve(list);
+        });
+    });
+};
+
+router.get("/", (req, res) => {
     res.sendFile("index.html");
+});
+
+router.get("/api/projects", (req, res)=>{
+    console.log("inside projects");
+    readDirs("projects")
+    .then((list)=>{
+        console.log("Folders are ::: ", list);
+        res.send(list);
+    })
+    .catch((err)=>{
+        console.log("Error is ::::: ", err);
+        mkdirp("projects", err => {
+            if(err) console.log("Error while creating projects Dir");
+            res.send([]);
+        });
+    });
+});
+
+router.get("/:projectName", (req, res)=> {
+    console.log("inside projects");
+    var projectName = req.params.projectName;
+    console.log("projectName :::: ", projectName);
 });
 
 router.get("/api", (req, res) => {
@@ -42,14 +82,6 @@ router.post("/api/createproject", (req, res) => {
     res.send("Project Created");
 });
 
-const writeFile = (filePath, content) => {
-    return new Promise((resolve, reject) => {
-        fs.writeFile(filePath, content, 'utf-8', err => {
-            if (err) reject(err);
-            else resolve();
-        });
-    });
-};
 
 router.post("/api/getLog", (req, res) => {
     console.log("Request is :::: ", req.body);

@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './components/Home.vue';
+import Tests from './components/Tests.vue';
 import LogProvider from './components/LogProvider.vue';
 import LogReport from './components/LogReport.vue';
 
@@ -12,6 +13,9 @@ export default new Router({
   routes: [{
     path: "/",
     component: Home
+  },{
+    path: "/tests",
+    component: Tests
   },{
       path: "/logview",
       component: LogProvider,
