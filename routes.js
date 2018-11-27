@@ -30,20 +30,11 @@ router.get("/api/projects", (req, res) => {
     console.log("inside projects");
     readDirs("projects")
         .then((list) => {
-            console.log("Folders are ::: ", list);
             res.send(list);
         })
         .catch((err) => {
             console.log("Error is ::::: ", err);
             res.send([]);
-            // mkdirp("projects", err => {
-            //     if (err) console.log("Error while creating projects Dir");
-            //     res.send([]);
-            // }).then((res) => {
-            //     console.log("Response ::::: ", res);
-            // }).catch((err) => {
-            //     console.log("Error is ::::: ", err);
-            // });
         });
 });
 
@@ -79,6 +70,22 @@ router.get("/api/:projectName", (req, res) => {
         });
 });
 
+router.get("/api/:projectName/:dir", (req, res) => {
+    console.log("Project Name : ", req.params.projectName, " - Directory : ", req.params.dir);
+    readDirs("projects/" + req.params.projectName + "/" + req.params.dir)
+        .then(list => {
+            // let response = [];
+            // list.filter(name=>{
+            //     let fileObj;
+            //     name.isDirectory = name.isDirectory()
+            // });
+            res.send(list);
+        })
+        .catch(err => {
+            console.log("Error :: ", err);
+            res.send([]);
+        });
+});
 
 router.post("/api/getLog", (req, res) => {
     console.log("Request is :::: ", req.body);

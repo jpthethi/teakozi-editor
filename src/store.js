@@ -68,12 +68,9 @@ export default new Vuex.Store({
       state.tests = tests;
     },
     SET_PROJECT_NAME(state, projectName) {
-      console.log("inside SET_PROJECT_NAME :::: ", projectName);
       state.projectName = projectName;
-      console.log("inside SET_PROJECT_NAME :::: ", state.projectName);
     },
     SET_PROJECTS(state, projects) {
-      console.log("inside SET_PROJECT_NAME");
       state.projects = projects;
     }
   },
@@ -90,7 +87,6 @@ export default new Vuex.Store({
     getProject(context) {
       Axios.get("/api/" + context.state.projectName)
         .then(res => {
-          console.log(res);
           context.state.projectDirs = res.data;
         })
         .catch(err => {

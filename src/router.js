@@ -5,6 +5,9 @@ import Tests from './components/Tests.vue';
 import Project from './components/Project.vue';
 import LogProvider from './components/LogProvider.vue';
 import LogReport from './components/LogReport.vue';
+import ProjectDir from './components/ProjectDir.vue';
+import ProjectDirList from './components/ProjectDirList.vue';
+import ProjectFile from './components/ProjectFile.vue';
 
 Vue.use(Router);
 
@@ -18,9 +21,21 @@ export default new Router({
     path: "/tests",
     component: Tests
   }, {
-    path: "/:projectName1",
+    path: "/:projectName",
     component: Project,
-    props: true
+    props: true,
+    children: [{
+      path: '',
+      component: ProjectDirList,
+      props: true
+    }, {
+      path: ':dir',
+      component: ProjectDir,
+      props: true,
+    }, {
+      path: ':dir/:file',
+      component: ProjectFile
+    }]
   }, {
     path: "/logview",
     component: LogProvider,
