@@ -4,12 +4,12 @@
     form.form-inline.mb-2
       .form-group
         input.form-control.mr-2(placeholder="Enter Project Name" v-model="projectName")
-        a.btn.btn-info.btn-md(:href="'/'+projectName") New Project
+        router-link.btn.btn-info.btn-md(:to="'/'+projectName"  :class="projectName==''?'disabled':''") New Project
     ul.list-group
       template(v-for="(name, ind) in projects")
         li.list-group-item 
           h4
-            a.mr-4(:href="'/'+name") {{name}}
+            router-link.mr-4(:to="'/'+name") {{name}}
 </template>
 
 <script>

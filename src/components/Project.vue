@@ -1,19 +1,34 @@
 <template lang="pug">
-.container-fluid
-  h4 Hello
+.container-fluid.mt-2
+  h4 {{projectName}}
+  ul.list-group
+    template(v-for="(dir, ind) in dirs")
+      li.list-group-item
+        h4
+          router-link(:to="'/'+projectName+'/dir'") {{dir}}
 </template>
 <script>
-import Axios from 'axios';
+import Axios from "axios";
 export default {
-  data (){
-    return {
-    };
+  props: ["projectName1"],
+  data() {
+    return {};
   },
-  beforeMount(){
+  computed: {
+    projectName() {
+      return this.$store.state.projectName;
+    },
+    dirs() {
+      return this.$store.state.projectDirs;
+    }
   },
-  methods: {
+  created() {
+    console.log("projectName ::::: ", this.projectName1);
+    this.$store.commit("SET_PROJECT_NAME", this.projectName1);
+    this.$store.dispatch("getProject");
   },
-}    
+  methods: {}
+};
 </script>
 <style lang="scss">
 </style>

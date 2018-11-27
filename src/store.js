@@ -60,30 +60,43 @@ export default new Vuex.Store({
     localObj,
     checkObj,
     projectName: '',
-    projects: []
+    projects: [],
+    projectDirs: []
   },
   mutations: {
     testsUpdated(state, tests) {
       state.tests = tests;
     },
-    SET_PROJECT_NAME(state, projectName){
+    SET_PROJECT_NAME(state, projectName) {
+      console.log("inside SET_PROJECT_NAME :::: ", projectName);
       state.projectName = projectName;
+      console.log("inside SET_PROJECT_NAME :::: ", state.projectName);
     },
-    SET_PROJECTS(state, projects){
+    SET_PROJECTS(state, projects) {
+      console.log("inside SET_PROJECT_NAME");
       state.projects = projects;
     }
   },
   actions: {
-    getProjects(context){
+    getProjects(context) {
       Axios.get("/api/projects")
-      .then((res)=> {
-        context.commit("SET_PROJECTS",res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+        .then((res) => {
+          context.commit("SET_PROJECTS", res.data);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    getProject(context) {
+      Axios.get("/api/" + context.state.projectName)
+        .then(res => {
+          console.log(res);
+          context.state.projectDirs = res.data;
+        })
+        .catch(err => {
+          console.log("Error is :::: ", err);
+        });
     }
   },
-  getters: {
-  }
+  getters: {}
 });
