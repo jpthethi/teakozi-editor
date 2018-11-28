@@ -11,7 +11,7 @@
 <script>
 export default {
   computed: {
-    projectName(){
+    projectName() {
       return this.$store.state.projectName;
     },
     projectNames() {
@@ -22,7 +22,7 @@ export default {
     }
   },
   created() {
-    console.log("inside ProjectDirList created function");
+    this.$store.commit("SET_PATHS", this.$route.path);
     this.$store.dispatch("getProject");
   }
 };

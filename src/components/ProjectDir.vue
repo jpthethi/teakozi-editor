@@ -1,7 +1,6 @@
 <template lang="pug">
 .row
   .col-6
-    h2 {{$route.params.dir}}
     ul.list-group
       template(v-for="(subDir, ind) in subDirs")
         li.list-group-item
@@ -11,13 +10,13 @@
 <script>
 import Axios from "axios";
 export default {
-  data(){
+  data() {
     return {
       dirs: []
-    }
+    };
   },
   computed: {
-    subDirs(){
+    subDirs() {
       return this.dirs;
     },
     projectName() {
@@ -25,15 +24,16 @@ export default {
     }
   },
   created() {
-    Axios.get("/api/"+this.projectName+"/"+this.$route.params.dir)
-    .then(res=>{
-      console.log("Response :::: ", res);
-      this.dirs = res.data;
-    })
-    .catch(err =>{
-      console.log("Error ::: ", err);
-    })
-  }
+    this.$store.commit("SET_PATHS", this.$route.path);
+    Axios.get("/api/" + this.projectName + "/" + this.$route.params.dir)
+      .then(res => {
+        console.log("Response :::: ", res);
+        this.dirs = res.data;
+      })
+      .catch(err => {
+        console.log("Error ::: ", err);
+      });
+  },
 };
 </script>
 <style lang="scss">
