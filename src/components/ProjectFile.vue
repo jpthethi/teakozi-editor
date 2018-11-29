@@ -1,6 +1,6 @@
 <template lang="pug">
   .row
-    .col-6
+    .col-12
       .card
         .card-header
           nav.navbar.navbar-expand-lg.navbar-light.bg-light.float-right
@@ -65,7 +65,7 @@ export default {
       });
   },
   components: {
-    codemirror,
+    codemirror
   },
   directives: {
     //highlightjs
@@ -83,7 +83,7 @@ export default {
           this.$route.params.dir +
           "/" +
           this.$route.params.file,
-        { code : this.code}
+        { code: this.code }
       )
         .then(res => {
           console.log("Response : ", res);

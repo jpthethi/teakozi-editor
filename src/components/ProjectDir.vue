@@ -1,11 +1,12 @@
 <template lang="pug">
-.row
-  .col-6
-    ul.list-group
-      template(v-for="(subDir, ind) in subDirs")
-        li.list-group-item
-          h5
-            router-link(:to="'/'+$route.params.projectName+'/'+$route.params.dir+'/'+subDir") {{subDir}}
+  .row
+    .col-12
+      table.table.table-hover.mb-0
+        tbody
+          template(v-for="(subDir, ind) in subDirs")
+            td
+              h5
+                router-link(:to="'/'+$route.params.projectName+'/'+$route.params.dir+'/'+subDir") {{subDir}}
 </template>
 <script>
 import Axios from "axios";
@@ -33,7 +34,7 @@ export default {
       .catch(err => {
         console.log("Error ::: ", err);
       });
-  },
+  }
 };
 </script>
 <style lang="scss">

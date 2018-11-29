@@ -1,11 +1,12 @@
 <template lang="pug">
   .row
-    .col-6
-      ul.list-group
-        template(v-for="(dir, ind) in dirs")
-          li.list-group-item
-            h4
-              router-link(:to="'/'+projectName+'/'+dir") {{dir}}
+    .col-12
+      table.table.table-hover.mb-0
+        tbody
+          tr(v-for="(dir, ind) in dirs")
+            td
+              h5
+                router-link(:to="'/'+projectName+'/'+dir") {{dir}}
 </template>
 
 <script>
