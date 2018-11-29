@@ -39,7 +39,6 @@ router.get("/", (req, res) => {
 });
 
 router.get("/api/projects", (req, res) => {
-  console.log("inside projects");
   readDirs("projects")
     .then((list) => {
       res.send(list);
@@ -118,7 +117,6 @@ router.get("/api/projects/:projectName/:dir/:file", (req, res) => {
 });
 
 router.post("/api/projects/:projectName/:dir/:file", (req, res) => {
-  console.log("content is :::: ", req.body.code);
   writeFile("projects/" + req.params.projectName + "/" + req.params.dir + "/" + req.params.file, req.body.code)
     .then(() => {
       res.send("File Saved Successfully");
@@ -140,7 +138,6 @@ router.get("/api/tests", (req, res) => {
 });
 
 router.post("/api/getLog", (req, res) => {
-  console.log("Request is :::: ", req.body);
   writeFile("./sample/tests/1.yml", req.body.yaml)
     .then(() => {
       teakozi.start("sample").

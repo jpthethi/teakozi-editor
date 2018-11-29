@@ -75,11 +75,8 @@ export default new Vuex.Store({
       state.projects = projects;
     },
     SET_PATHS(state, path) {
-      console.log("Given Path :::: ", path);
       state.paths = [];
       let paths = path.split("/");
-      //paths.shift();
-      console.log("paths :::: ", JSON.stringify(paths));
       paths.filter((ele, ind) => {
         let path1 = paths.slice(0, ind+1).join("/");
         state.paths.push({
