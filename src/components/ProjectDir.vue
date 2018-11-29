@@ -5,8 +5,15 @@
         tbody
           template(v-for="(subDir, ind) in subDirs")
             td
-              h5
-                router-link(:to="'/'+$route.params.projectName+'/'+$route.params.dir+'/'+subDir") {{subDir}}
+              .form-group
+                template(v-if="subDir.isFile == false")
+                  i.material-icons(style="font-size: 1em;") folder
+                template(v-else)
+                  i.material-icons.breadcru(style="font-size: 1em;") insert_drive_file
+                template(v-if="subDir.ext == '.yml'")
+                  router-link.ml-2(:to="{name: 'tests', params: {ymlPath: '/'+$route.params.projectName+'/'+$route.params.dir+'/'+subDir.name}}") {{subDir.name}}
+                template(v-else)
+                  router-link.ml-2(:to="'/projects/'+$route.params.projectName+'/'+$route.params.dir+'/'+subDir.name") {{subDir.name}}
 </template>
 <script>
 import Axios from "axios";
@@ -26,9 +33,8 @@ export default {
   },
   created() {
     this.$store.commit("SET_PATHS", this.$route.path);
-    Axios.get("/api/" + this.projectName + "/" + this.$route.params.dir)
+    Axios.get("/api/projects/" + this.projectName + "/" + this.$route.params.dir)
       .then(res => {
-        console.log("Response :::: ", res);
         this.dirs = res.data;
       })
       .catch(err => {

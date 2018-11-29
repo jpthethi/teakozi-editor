@@ -19,9 +19,11 @@ export default new Router({
     component: Home
   }, {
     path: "/tests",
-    component: Tests
+    component: Tests,
+    name: "tests",
+    props: true
   }, {
-    path: "/:projectName",
+    path: "/projects/:projectName",
     component: Project,
     props: true,
     children: [{

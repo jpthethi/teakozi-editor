@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const mkdirp = require("mkdirp-promise");
 const fs = require("fs");
+const path = require("path");
+//const fse = require("fs-extra");
 const teakozi = require("teakozi");
 
 const writeFile = (filePath, content) => {
@@ -48,9 +50,20 @@ router.get("/api/projects", (req, res) => {
     });
 });
 
-router.get("/api/:projectName", (req, res) => {
-  var projectName = req.params.projectName;
+function getFilesInfo(relPath, list) {
+  let response = [];
+  list.filter(file => {
+    response.push({
+      name: file,
+      ext: path.extname(file),
+      isFile: fs.lstatSync(relPath + "/" + file).isFile()
+    });
+  });
+  return response;
+}
 
+router.get("/api/projects/:projectName", (req, res) => {
+  var projectName = req.params.projectName;
   mkdirp("projects")
     .then(() => {
       mkdirp("projects/" + projectName);
@@ -59,7 +72,7 @@ router.get("/api/:projectName", (req, res) => {
       mkdirp("projects/" + projectName + "/config");
     })
     .then(() => {
-      if(!fs.existsSync("projects/" + projectName + "/config/index.js"))
+      if (!fs.existsSync("projects/" + projectName + "/config/index.js"))
         writeFile("projects/" + projectName + "/config/index.js", "module.exports={}");
     })
     .then(() => {
@@ -72,7 +85,8 @@ router.get("/api/:projectName", (req, res) => {
       mkdirp("projects/" + projectName + "/tests");
     })
     .then(() => {
-      res.send(["config", "models", "payload", "tests"]);
+      let response = getFilesInfo("projects/" + projectName, ["config", "models", "payload", "tests"])
+      res.send(response);
     })
     .catch((err) => {
       console.log("Error is ::::: ", err);
@@ -80,16 +94,12 @@ router.get("/api/:projectName", (req, res) => {
     });
 });
 
-router.get("/api/:projectName/:dir", (req, res) => {
-  console.log("Project Name : ", req.params.projectName, " - Directory : ", req.params.dir);
-  readDirs("projects/" + req.params.projectName + "/" + req.params.dir)
+router.get("/api/projects/:projectName/:dir", (req, res) => {
+  let projectDirsPath = "projects/" + req.params.projectName + "/" + req.params.dir;
+  readDirs(projectDirsPath)
     .then(list => {
-      // let response = [];
-      // list.filter(name=>{
-      //     let fileObj;
-      //     name.isDirectory = name.isDirectory()
-      // });
-      res.send(list);
+      let response = getFilesInfo(projectDirsPath, list);
+      res.send(response);
     })
     .catch(err => {
       console.log("Error :: ", err);
@@ -97,7 +107,7 @@ router.get("/api/:projectName/:dir", (req, res) => {
     });
 });
 
-router.get("/api/:projectName/:dir/:file", (req, res) => {
+router.get("/api/projects/:projectName/:dir/:file", (req, res) => {
   readFile("projects/" + req.params.projectName + "/" + req.params.dir + "/" + req.params.file)
     .then(content => {
       res.send(content);
@@ -107,7 +117,7 @@ router.get("/api/:projectName/:dir/:file", (req, res) => {
     });
 });
 
-router.post("/api/:projectName/:dir/:file", (req, res) => {
+router.post("/api/projects/:projectName/:dir/:file", (req, res) => {
   console.log("content is :::: ", req.body.code);
   writeFile("projects/" + req.params.projectName + "/" + req.params.dir + "/" + req.params.file, req.body.code)
     .then(() => {
@@ -116,6 +126,16 @@ router.post("/api/:projectName/:dir/:file", (req, res) => {
     .catch(err => {
       console.lolg("Error came while saving");
       res.send(err);
+    });
+});
+
+router.get("/api/tests", (req, res) => {
+  readFile("projects/" + req.query.yamlPath)
+    .then(content => {
+      res.send(content);
+    })
+    .catch(err => {
+      console.log("Error :::: ", err);
     });
 });
 

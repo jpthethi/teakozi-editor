@@ -1,22 +1,28 @@
 <template lang="pug">
-  .row
-    .col-12
-      .card
-        .card-header
-          nav.navbar.navbar-expand-lg.navbar-light.bg-light.float-right
-            ul.navbar-nav
-              li.nav-item(v-if="!isEditMode")
-                a.nav-link.mr-2(href="" title="Edit File" @click.prevent="isEditMode = !isEditMode;")
-                  i.material-icons(style="font-size: 1.5em;") edit
-              li.nav-item(v-if="isEditMode")
-                a.nav-link.mr-2(href="" title="Save" @click.prevent="saveContent")
-                  i.material-icons(style="font-size: 1.5em;") save
-        .card-body
-          template(v-if="!isEditMode")
-            pre(v-highlightjs="code")
-              code.javascript
-          template(v-if="isEditMode")
-            codemirror(ref="myCm" :value="code" :options="cmOptions" @input="onCmChange")
+  .container
+    table.table
+      thead
+        tr
+          th
+            nav.navbar.navbar-expand-lg.navbar-light.bg-none.float-right.p-0
+              ul.navbar-nav
+                li.nav-item(v-if="!isEditMode")
+                  a.nav-link.mr-2(href="" title="Edit File" @click.prevent="isEditMode = !isEditMode;")
+                    i.material-icons(style="font-size: 1.5em;") edit
+                li.nav-item(v-if="isEditMode")
+                  a.nav-link.mr-2(href="" title="Save" @click.prevent="saveContent")
+                    i.material-icons(style="font-size: 1.5em;") save
+                li.nav-item(v-if="isEditMode")
+                  a.nav-link.mr-2(href="" title="Cancel" @click.prevent="isEditMode = !isEditMode;")
+                    i.material-icons(style="font-size: 1.5em;") cancel
+      tbody
+        tr
+          td
+            template(v-if="!isEditMode")
+              pre(v-highlightjs="code")
+                code.javascript
+            template(v-if="isEditMode")
+              codemirror(ref="myCm" :value="code" :options="cmOptions" @input="onCmChange")
 </template>
 <script>
 import Axios from "axios";
@@ -49,7 +55,7 @@ export default {
   created() {
     this.$store.commit("SET_PATHS", this.$route.path);
     Axios.get(
-      "/api/" +
+      "/api/projects/" +
         this.$route.params.projectName +
         "/" +
         this.$route.params.dir +

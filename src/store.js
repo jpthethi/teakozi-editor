@@ -100,7 +100,7 @@ export default new Vuex.Store({
         });
     },
     getProject(context) {
-      Axios.get("/api/" + context.state.projectName)
+      Axios.get("/api/projects/" + context.state.projectName)
         .then(res => {
           context.state.projectDirs = res.data;
         })

@@ -50,9 +50,6 @@ export default {
     this.$store.commit("SET_PATHS", this.$route.path);
     this.$store.commit("SET_PROJECT_NAME", this.$route.params.projectName);
   },
-  destroyed() {
-    //this.$store.commit("POP_PATH", this.$route.path);
-  },
   methods: {}
 };
 </script>

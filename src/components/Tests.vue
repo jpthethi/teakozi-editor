@@ -1,13 +1,13 @@
 <template lang="pug">
   .container.mt-3
     form
-      .form-group.row.project-row
+      //.form-group.row.project-row
         .col-6
           input.form-control(placeholder="Enter Project Name" @focusout="createProject($event.target.value)")
         .col-6.pt-2
           a.red.delete-project(title="Delete Project" href="" @click.prevent="deleteProject()")
             i.fa.fa-trash-o.fa-lg
-      .form-group.row
+      //.form-group.row
         .col-sm-8
           button.btn.btn-info(type='button', @click='getLog()') Get Log
         .col-sm-4
@@ -70,6 +70,7 @@ const YAML = require("js-yaml");
 //const JP = require("jsonpath");
 
 export default {
+  props: ["ymlPath"],
   components: {
     "app-step": Step
   },
@@ -79,6 +80,19 @@ export default {
       tests: Store.state.tests,
       step: Store.state.step
     };
+  },
+  mounted() {
+    if (this.ymlPath) {
+      Axios.get("/api/tests?yamlPath=" + this.ymlPath)
+        .then(res => {
+          let doc = YAML.safeLoad(res.data);
+          doc = this.getValidDoc(doc);
+          this.tests = doc;
+        })
+        .catch(err => {
+          console.log("Error : ", err);
+        });
+    }
   },
   updated() {
     console.log("latest tests :::: ", JSON.stringify(this.tests));
@@ -102,7 +116,7 @@ export default {
         return true;
       });
       let yamlStr = YAML.safeDump(yamlTests);
-      const blob = new Blob([yamlStr], {type: "text/plain;charset=urf-8"});
+      const blob = new Blob([yamlStr], { type: "text/plain;charset=urf-8" });
       FileSaver.saveAs(blob, "test.yml");
     },
     addTags() {

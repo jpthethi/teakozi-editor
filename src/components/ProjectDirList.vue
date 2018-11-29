@@ -5,8 +5,12 @@
         tbody
           tr(v-for="(dir, ind) in dirs")
             td
-              h5
-                router-link(:to="'/'+projectName+'/'+dir") {{dir}}
+              .form-group
+                template(v-if="dir.isFile == false")
+                  i.material-icons(style="font-size: 1em;") folder
+                template(v-else)
+                  i.material-icons(style="font-size: 1em;") file
+                router-link.ml-2(:to="'/projects/'+projectName+'/'+dir.name") {{dir.name}}
 </template>
 
 <script>
