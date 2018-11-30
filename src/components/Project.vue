@@ -1,13 +1,11 @@
 <template lang="pug">
-.container-fluid.mt-2
-  //h4
-    router-link(:to="'/'+projectName") {{projectName}}
+.container.mt-2
   .row
-    .col-6
+    .col-12
       .card
         .card-header.pb-0
           .row
-            .col-10
+            .col-6
               nav
                 ol.breadcrumb.bg-light.mb-0
                   template(v-for="(path, ind) in paths")
@@ -17,7 +15,7 @@
                       template(v-else)
                         li.breadcrumb-item
                           router-link(:to="path.path") {{path.name}}
-            .col-2
+            .col-6
               nav.navbar.navbar-expand-lg.navbar-light.bg-none.float-right
                 ul.navbar-nav
                   li.nav-item
