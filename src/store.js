@@ -62,7 +62,8 @@ export default new Vuex.Store({
     checkObj,
     projectName: '',
     projects: [],
-    projectDirs: []
+    projectDirs: [],
+    contents: []
   },
   mutations: {
     testsUpdated(state, tests) {
@@ -84,6 +85,12 @@ export default new Vuex.Store({
           path: path1
         });
       });
+    },
+    SET_CONTENTS(state, contents){
+      state.contents = contents;
+    },
+    PUSH_CONTENT(state, content){
+      state.contents.push(content);
     }
   },
   actions: {

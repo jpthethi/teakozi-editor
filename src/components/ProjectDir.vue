@@ -3,7 +3,7 @@
     .col-12
       table.table.table-hover.mb-0
         tbody
-          template(v-for="(subDir, ind) in subDirs")
+          template(v-for="(subDir, ind) in contents")
             td
               .form-group
                 template(v-if="subDir.isFile == false")
@@ -24,6 +24,9 @@ export default {
     };
   },
   computed: {
+    contents() {
+      return this.$store.state.contents;
+    },
     subDirs() {
       return this.dirs;
     },
@@ -35,7 +38,8 @@ export default {
     this.$store.commit("SET_PATHS", this.$route.path);
     Axios.get("/api/projects/" + this.projectName + "/" + this.$route.params.dir)
       .then(res => {
-        this.dirs = res.data;
+        //this.dirs = res.data;
+        this.$store.commit("SET_CONTENTS", res.data);
       })
       .catch(err => {
         console.log("Error ::: ", err);

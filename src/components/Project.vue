@@ -18,11 +18,20 @@
             .col-6
               nav.navbar.navbar-expand-lg.navbar-light.bg-none.float-right
                 ul.navbar-nav
-                  li.nav-item
-                    a.nav-link.mr-2(href="" title="Create File" @click.prevent="")
+                  li.nav-item.dropdown
+                    a.nav-link.mr-2.dropdown-toggle#createFileDropdown(href="" title="Create File" data-toggler="dropdown" aria-haspopup="true" aria-expanded="false" @click.prevent="showNewFile = !showNewFile; clickedIcon = showNewFile? 'file': ''" :class="clickedIcon == 'file'? 'text-info': ''")
                       i.material-icons(style="font-size: 1.5em;") note_add
-                  li.nav-item
-                    a.nav-link.mr-2(href="" title="Create Folder" @click.prevent="")
+                    ul.dropdown-menu(:class="showNewFile?'show':''" style="width: 25em;")
+                      li.dropdown-item
+                        form.form-inline(@submit.prevent="saveFileOrFolder")
+                          .form-group
+                            input.form-control.mr-2(name="name")
+                            button.btn.btn-info.mr-2(type="submit") Create
+                            button.btn.btn-default(type="cancel" @click.prevent="cancelSaveFileOrFolder") Cancel
+                      //li.dropdown-item
+                        span Succeed
+                  li.nav-item.dropdown
+                    a.nav-link.mr-2.dropdown-toggle#createFileDropdown(href="" title="Create File" data-toggler="dropdown" aria-haspopup="true" aria-expanded="false" @click.prevent="showNewFile = !showNewFile; clickedIcon = showNewFile? 'folder':''" :class="clickedIcon == 'folder'? 'text-info': ''")
                       i.material-icons(style="font-size: 1.5em;") create_new_folder
         .card-body.py-0
           router-view
@@ -32,7 +41,11 @@ import Axios from "axios";
 export default {
   props: ["projectName1"],
   data() {
-    return {};
+    return {
+      showNewFile: false,
+      clickedIcon: "",
+      response: ""
+    };
   },
   computed: {
     projectName() {
@@ -49,7 +62,33 @@ export default {
     this.$store.commit("SET_PATHS", this.$route.path);
     this.$store.commit("SET_PROJECT_NAME", this.$route.params.projectName);
   },
-  methods: {}
+  methods: {
+    saveFileOrFolder(e) {
+      Axios.post(
+        "/api/create_folder_file?path=" +
+          this.$route.path +
+          "&name=" +
+          e.target.elements.name.value +
+          "&type=" +
+          this.clickedIcon,
+        {}
+      )
+        .then(res => {
+          this.showNewFile = false;
+          this.clickedIcon = "";
+          console.log("Response : ", JSON.stringify(res.data));
+          if (res.data.isCreated) {
+          }
+        })
+        .catch(err => {
+          console.log("Error : ", err);
+        });
+    },
+    cancelSaveFileOrFolder(e) {
+      this.showNewFile = false;
+      this.clickedIcon = "";
+    }
+  }
 };
 </script>
 <style lang="scss">

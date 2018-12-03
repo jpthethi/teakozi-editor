@@ -137,6 +137,50 @@ router.get("/api/tests", (req, res) => {
     });
 });
 
+router.post("/api/create_folder_file", (req, res) => {
+  var path = req.query.path;
+  var name = req.query.name;
+  var type = req.query.type;
+  var totalPath = path + "/" + name;
+  if (type == "folder" && !fs.existsSync(totalPath)) {
+    mkdirp(totalPath)
+      .then(() => {
+        res.send({
+          msg: "Folder Created",
+          isCreated: true
+        });
+      })
+      .catch(err => {
+        res.send({
+          msg: "Folder Failed to create",
+          isCreated: false,
+          error: err
+        });
+      });
+  } else if (type == "file" && !fs.existsSync(totalPath)) {
+    writeFile(totalPath)
+      .then(() => {
+        res.send({
+          msg: "File Created",
+          isCreated: true
+        });
+      })
+      .catch(err => {
+        res.send({
+          msg: "File Failed create",
+          isCreated: false,
+          error: err
+        });
+      });
+  } else {
+    res.send({
+      msg: "Corrupted Path",
+      isCreated: false,
+      error: new Error("Unknown Reason")
+    });
+  }
+});
+
 router.post("/api/getLog", (req, res) => {
   writeFile("./sample/tests/1.yml", req.body.yaml)
     .then(() => {
@@ -153,7 +197,6 @@ router.post("/api/getLog", (req, res) => {
             msg: "Error came while teakozi test execution",
             error: err
           });
-
         });
     })
     .catch((err) => {
@@ -162,5 +205,7 @@ router.post("/api/getLog", (req, res) => {
       });
     });
 });
+
+
 
 module.exports = router;
