@@ -8,6 +8,8 @@ import LogReport from './components/LogReport.vue';
 import ProjectDir from './components/ProjectDir.vue';
 import ProjectDirList from './components/ProjectDirList.vue';
 import ProjectFile from './components/ProjectFile.vue';
+import Content from './components/Content.vue';
+import NotFound from './components/NotFound.vue';
 
 Vue.use(Router);
 
@@ -15,36 +17,56 @@ export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [{
-    path: "/",
-    component: Home
-  }, {
-    path: "/tests",
-    component: Tests,
-    name: "tests",
-    props: true
-  }, {
-    path: "/projects/:projectName",
-    component: Project,
-    props: true,
-    children: [{
-      path: '',
-      component: ProjectDirList,
+      path: "/",
+      component: Home
+    }, {
+      path: "/tests",
+      component: Tests,
+      name: "tests",
       props: true
     }, {
-      path: ':dir',
-      component: ProjectDir,
-      props: true,
+      path: "/projects/:projectName",
+      component: Project,
+      // children: [{
+      //     path: '',
+      //     component: Content,
+      //   },
+      //  {
+      //   path: ':dir',
+      //   component: Content,
+      //   props: true,
+      // }
+      //]
+    },
+
+    // {
+    //   path: "/projects/:projectName",
+    //   component: Project,
+    //   props: true,
+    //   children: [{
+    //     path: '',
+    //     component: ProjectDirList,
+    //     props: true
+    //   }, {
+    //     path: ':dir',
+    //     component: ProjectDir,
+    //     props: true,
+    //   }, {
+    //     path: ':dir/:file',
+    //     component: ProjectFile
+    //   }]
+    // },
+    {
+      path: "/logview",
+      component: LogProvider,
     }, {
-      path: ':dir/:file',
-      component: ProjectFile
-    }]
-  }, {
-    path: "/logview",
-    component: LogProvider,
-  }, {
-    path: "/logreport",
-    name: "logreport",
-    component: LogReport,
-    props: true
-  }]
+      path: "/logreport",
+      name: "logreport",
+      component: LogReport,
+      props: true
+    }, {
+      path: "*",
+      component: NotFound
+    }
+  ]
 });

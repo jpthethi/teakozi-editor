@@ -38,6 +38,8 @@
 </template>
 <script>
 import Axios from "axios";
+import Content from "./Content.vue";
+import ContentVue from "./Content.vue";
 export default {
   props: ["projectName1"],
   data() {
@@ -61,16 +63,40 @@ export default {
   created() {
     this.$store.commit("SET_PATHS", this.$route.path);
     this.$store.commit("SET_PROJECT_NAME", this.$route.params.projectName);
+    console.log("Response data in Project : ", this.$route.path);
+    console.log("Paths are ::: ", JSON.stringify(this.paths));
+    Axios.get("/api" + this.$route.path)
+      .then(res => {
+        console.log("Response data in ProjectDIr : ", JSON.stringify(res.data));
+        let contents = res.data;
+        this.$store.commit("SET_CONTENTS", contents);
+        let { routes } = this.$router.options;
+        let routerData = routes.find(r => r.path === "/projects/:projectName");
+        routerData.children = [{ path: this.$route.path }];
+        contents.find(content => {
+          routerData.children.push({
+            path: this.$route.path + "/" + content.name,
+            component: ContentVue
+          });
+        });
+        this.$router.addRoutes([routerData]);
+        console.log("Updated routes are :::: ", JSON.stringify(routes));
+      })
+      .catch(err => {
+        console.log("Error ::: ", err);
+      });
   },
   methods: {
     saveFileOrFolder(e) {
+      let name = e.target.elements.name.value;
+      let type = this.clickedIcon;
       Axios.post(
         "/api/create_folder_file?path=" +
           this.$route.path +
           "&name=" +
-          e.target.elements.name.value +
+          name +
           "&type=" +
-          this.clickedIcon,
+          type,
         {}
       )
         .then(res => {
@@ -78,6 +104,7 @@ export default {
           this.clickedIcon = "";
           console.log("Response : ", JSON.stringify(res.data));
           if (res.data.isCreated) {
+            this.$store.commit("PUSH_CONTENT", res.data.content);
           }
         })
         .catch(err => {

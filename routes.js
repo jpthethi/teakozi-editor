@@ -138,16 +138,24 @@ router.get("/api/tests", (req, res) => {
 });
 
 router.post("/api/create_folder_file", (req, res) => {
-  var path = req.query.path;
+  var absPath = req.query.path;
   var name = req.query.name;
   var type = req.query.type;
-  var totalPath = path + "/" + name;
+  var totalPath = (absPath + "/" + name).substring(1);
+
+  var resContent = {
+    name: name,
+    isFile: type == "file" ? true : false,
+    ext: path.extname(name)
+  }
+
   if (type == "folder" && !fs.existsSync(totalPath)) {
     mkdirp(totalPath)
       .then(() => {
         res.send({
           msg: "Folder Created",
-          isCreated: true
+          isCreated: true,
+          content: resContent
         });
       })
       .catch(err => {
@@ -158,11 +166,12 @@ router.post("/api/create_folder_file", (req, res) => {
         });
       });
   } else if (type == "file" && !fs.existsSync(totalPath)) {
-    writeFile(totalPath)
+    writeFile(totalPath, "")
       .then(() => {
         res.send({
           msg: "File Created",
-          isCreated: true
+          isCreated: true,
+          content: resContent
         });
       })
       .catch(err => {

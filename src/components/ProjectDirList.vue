@@ -27,11 +27,12 @@ export default {
       return this.$store.state.projectDirs;
     }
   },
-  created() {
+  beforeCreate() {
     this.$store.commit("SET_PATHS", this.$route.path);
     //this.$store.dispatch("getProject");
     Axios.get("/api/projects/" + this.projectName)
       .then(res => {
+        console.log("Response data in ProjectDirList : ", JSON.stringify(res.data));
         this.$store.commit("SET_CONTENTS", res.data);
       })
       .catch(err => {

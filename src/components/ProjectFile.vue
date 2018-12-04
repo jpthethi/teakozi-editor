@@ -52,7 +52,7 @@ export default {
       return this.$refs.myCm.codemirror;
     }
   },
-  created() {
+  beforeCreate() {
     this.$store.commit("SET_PATHS", this.$route.path);
     Axios.get(
       "/api/projects/" +
@@ -63,7 +63,7 @@ export default {
         this.$route.params.file
     )
       .then(res => {
-        console.log("Response : ", res.data);
+        console.log("Response data in ProjectFile : ", JSON.stringify(res.data));
         this.code = res.data;
       })
       .catch(err => {
