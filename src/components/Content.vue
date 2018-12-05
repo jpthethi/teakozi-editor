@@ -10,7 +10,7 @@
                   i.material-icons(style="font-size: 1em;") folder
                 template(v-else)
                   i.material-icons(style="font-size: 1em;") file
-                router-link.ml-2(:to="$route.path+'/'+content.name") {{content.name}}
+                a.ml-2(:href="$route.path+'/'+content.name" :to="$route.path+'/'+content.name") {{content.name}}
 </template>
 
 <script>
@@ -25,7 +25,7 @@ export default {
     }
   },
   beforeCreate(){
-    console.log("Created");
+    console.log("Content component created");
   },
   mount() {
     console.log("Before Destroyed");

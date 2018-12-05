@@ -25,18 +25,18 @@ export default new Router({
       name: "tests",
       props: true
     }, {
-      path: "/projects/:projectName",
+      path: "/projects/*",
       component: Project,
-      // children: [{
-      //     path: '',
-      //     component: Content,
-      //   },
-      //  {
-      //   path: ':dir',
-      //   component: Content,
-      //   props: true,
-      // }
-      //]
+      children: [{
+          path: '',
+          component: Content,
+        },
+        //  {
+        //   path: ':dir',
+        //   component: Content,
+        //   props: true,
+        // }
+      ]
     },
 
     // {
