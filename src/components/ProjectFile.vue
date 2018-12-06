@@ -73,9 +73,6 @@ export default {
   components: {
     codemirror
   },
-  directives: {
-    //highlightjs
-  },
   methods: {
     onCmChange(newCode) {
       this.code = newCode;

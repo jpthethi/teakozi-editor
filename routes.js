@@ -93,6 +93,30 @@ router.get("/api/projects/:projectName", (req, res) => {
     });
 });
 
+router.get("/api/projects/:projectName/*", (req, res) => {
+  console.log("Path is ::::: ", req.path.split("/api/")[1]);
+  let actualPath = req.path.split("/api/")[1];
+  if (fs.existsSync(actualPath) && !fs.lstatSync(actualPath).isFile()) {
+    readDirs(actualPath)
+      .then(list => {
+        res.send(getFilesInfo(actualPath, list));
+      })
+      .catch(err => {
+        res.send([]);
+      });
+  } else if (fs.existsSync(actualPath) && fs.lstatSync(actualPath).isFile()) {
+    readFile(actualPath)
+      .then(content => {
+        res.send(content);
+      })
+      .catch(err => {
+        res.send([]);
+      });
+  } else {
+    res.send([]);
+  }
+});
+
 router.get("/api/projects/:projectName/:dir", (req, res) => {
   let projectDirsPath = "projects/" + req.params.projectName + "/" + req.params.dir;
   readDirs(projectDirsPath)

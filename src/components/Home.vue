@@ -1,34 +1,40 @@
 <template lang="pug">
-.container-fluid.mt-3.row
-  .col-6
-    table.table.table-hover.table-md
-      thead
-        tr
-          th
-            form.form-inline.mb-2.pull-right
-              .form-group
-                input.form-control.mr-2(placeholder="Enter Project Name" v-model="projectName")
-                router-link.btn.btn-info.btn-md(:to="'/projects/'+projectName"  :class="projectName==''?'disabled':''") New Project
-      tbody
-        template(v-for="(name, ind) in projects")
-          tr
-            td
-              router-link.mr-4(:to="'/projects/'+name") {{name}}
+.container.mt-3
+  .row
+    .col-12
+      .card
+        .card-header
+          form.form-inline.mb-2.pull-right
+            .form-group
+              input.form-control.mr-2(placeholder="Enter Project Name" v-model="pName")
+              router-link.btn.btn-info.btn-md(:to="'/projects/'+pName"  :class="pName==''?'disabled':''") New Project
+        .card-body.py-0
+          table.table.table-hover
+            tbody
+              template(v-for="(name, ind) in projects")
+                tr
+                  td
+                    i.material-icons(style="font-size: 1em;") assignment
+                    router-link.ml-2(:to="'/projects/'+name") {{name}}
 </template>
 
 <script>
-import Axios from "axios";
 export default {
+  data() {
+    return {
+      pName: ""
+    };
+  },
   computed: {
     projects() {
       return this.$store.state.projects;
     },
-    projectName: {
+    newProjectName: {
       set(name) {
-        this.$store.commit("SET_PROJECT_NAME", name);
+        this.pName;
       },
       get() {
-        return this.$store.state.projectName;
+        return this.pName;
       }
     }
   },
