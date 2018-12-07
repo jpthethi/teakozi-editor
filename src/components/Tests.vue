@@ -83,8 +83,10 @@ export default {
   },
   mounted() {
     if (this.ymlPath) {
+      console.log("YamlPath is :::: ", this.ymlPath);
       Axios.get("/api/tests?yamlPath=" + this.ymlPath)
         .then(res => {
+          console.log("Response is after mounted :::: ", JSON.stringify(res.data))
           let doc = YAML.safeLoad(res.data);
           doc = this.getValidDoc(doc);
           this.tests = doc;

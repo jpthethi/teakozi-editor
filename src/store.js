@@ -66,6 +66,7 @@ export default new Vuex.Store({
     contents: [],
     isEditMode: false,
     isFileMode: false,
+    editMode: 'raw'
   },
   mutations: {
     testsUpdated(state, tests) {
@@ -99,6 +100,10 @@ export default new Vuex.Store({
     },
     SET_IS_FILE_MODE(state, isFileMode) {
       state.isFileMode = isFileMode;
+    },
+    SET_EDIT_MODE(state, editMode){
+      console.log("inside SET_EDIT_MODE");
+      state.editMode = editMode;
     }
   },
   actions: {

@@ -107,7 +107,6 @@ router.get("/api/projects/:projectName", (req, res) => {
 });
 
 router.get("/api/projects/:projectName/*", (req, res) => {
-  console.log("Path is ::::: ", req.path.split("/api/")[1]);
   let actualPath = req.path.split("/api/")[1];
   let isExists = fs.existsSync(actualPath);
   let isPathAFile = fs.lstatSync(actualPath).isFile();
@@ -150,47 +149,9 @@ router.get("/api/projects/:projectName/*", (req, res) => {
   }
 });
 
-router.get("/api/projects/:projectName/:dir", (req, res) => {
-  let projectDirsPath =
-    "projects/" + req.params.projectName + "/" + req.params.dir;
-  readDirs(projectDirsPath)
-    .then(list => {
-      let response = getFilesInfo(projectDirsPath, list);
-      res.send(response);
-    })
-    .catch(err => {
-      console.log("Error :: ", err);
-      res.send([]);
-    });
-});
-
-router.get("/api/projects/:projectName/:dir/:file", (req, res) => {
-  readFile(
-      "projects/" +
-      req.params.projectName +
-      "/" +
-      req.params.dir +
-      "/" +
-      req.params.file
-    )
-    .then(content => {
-      res.send(content);
-    })
-    .catch(err => {
-      console.log("Error : ", err);
-    });
-});
-
-router.post("/api/projects/:projectName/:dir/:file", (req, res) => {
-  writeFile(
-      "projects/" +
-      req.params.projectName +
-      "/" +
-      req.params.dir +
-      "/" +
-      req.params.file,
-      req.body.code
-    )
+router.post("/api/projects/:projectName/*", (req, res) => {
+  let actualPath = req.path.split("/api/")[1];
+  writeFile(actualPath, req.body.code)
     .then(() => {
       res.send("File Saved Successfully");
     })
@@ -201,7 +162,8 @@ router.post("/api/projects/:projectName/:dir/:file", (req, res) => {
 });
 
 router.get("/api/tests", (req, res) => {
-  readFile("projects/" + req.query.yamlPath)
+  console.log("inside /api/tests ");
+  readFile(req.query.yamlPath)
     .then(content => {
       res.send(content);
     })

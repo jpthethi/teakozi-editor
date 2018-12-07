@@ -21,13 +21,15 @@
                     li.nav-item.dropdown
                       a.nav-link.mr-2.dropdown-toggle#createFileDropdown(href="" title="Create File" data-toggler="dropdown" aria-haspopup="true" aria-expanded="false" @click.prevent="showNewFile = !showNewFile; clickedIcon = showNewFile? 'file': ''" :class="clickedIcon == 'file'? 'text-info': ''")
                         i.material-icons(style="font-size: 1.5em;") note_add
-                      ul.dropdown-menu(:class="showNewFile?'show':''" style="width: 25em;")
+                      ul.dropdown-menu(:class="showNewFile?'show':''" style="width: 20em;")
                         li.dropdown-item
                           form.form-inline(@submit.prevent="saveFileOrFolder")
                             .form-group
                               input.form-control.mr-2(name="name")
-                              button.btn.btn-info.mr-2(type="submit") Create
-                              button.btn.btn-default(type="cancel" @click.prevent="cancelSaveFileOrFolder") Cancel
+                              button.btn.btn-link.pr-0(type="submit")
+                                i.material-icons(style="font-size: 1.5em;") check_circle
+                              button.btn.btn-link(type="cancel" @click.prevent="cancelSaveFileOrFolder")
+                                i.material-icons(style="font-size: 1.5em;") cancel
                         //li.dropdown-item
                           span Succeed
                     li.nav-item.dropdown

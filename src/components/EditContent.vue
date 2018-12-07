@@ -1,22 +1,25 @@
 <template lang="pug">
   .row
     .col-12
-      table.table.mb-0
-        thead
-          tr
-            th
-              nav.navbar.navbar-expand-lg.navbar-light.bg-none.float-right.p-0
-                ul.navbar-nav
-                  li.nav-item
-                    a.nav-link.mr-2(href="" title="Save File" @click.prevent="saveContent")
-                      i.material-icons(style="font-size: 1.5em;") save
-                  li.nav-item
-                    router-link.nav-link.mr-2(:to="$route.path.split('/edit')[1]" title="Cancel")
-                      i.material-icons(style="font-size: 1.5em;") cancel
-        tbody
-          tr
-            td
-              codemirror(ref="myCm" :value="code" :options="cmOptions" @input="onCmChange")
+      template(v-if="$store.state.editMode == 'raw'")
+        table.table.mb-0
+          thead
+            tr
+              th
+                nav.navbar.navbar-expand-lg.navbar-light.bg-none.float-right.p-0
+                  ul.navbar-nav
+                    li.nav-item
+                      a.nav-link.mr-2(href="" title="Save File" @click.prevent="saveContent")
+                        i.material-icons(style="font-size: 1.5em;") save
+                    li.nav-item
+                      router-link.nav-link.mr-2(:to="$route.path.split('/edit')[1]" title="Cancel")
+                        i.material-icons(style="font-size: 1.5em;") cancel
+          tbody
+            tr
+              td
+                codemirror(ref="myCm" :value="code" :options="cmOptions" @input="onCmChange")
+      template(v-else)
+        tests(:ymlPath="$route.path.split('/edit/')[1]")
 </template>
 
 <script>
@@ -25,6 +28,7 @@ import { codemirror } from "vue-codemirror";
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/javascript/javascript.js";
 import "codemirror/theme/base16-light.css";
+import TestsVue from './Tests.vue';
 export default {
   data() {
     return {
@@ -47,9 +51,11 @@ export default {
     }
   },
   components: {
-    codemirror
+    codemirror,
+    tests: TestsVue
   },
   created() {
+    console.log("$store.state.editMode :::: ", this.$store.state.editMode);
     this.$store.commit("SET_PATHS", this.$route.path);
     this.$store.commit("SET_IS_FILE_MODE", true);
     Axios.get("/api" + this.$route.path.split("/edit")[1])
@@ -70,7 +76,6 @@ export default {
       this.code = newCode;
     },
     saveContent(e) {
-      console.log("this.$router.path :::: ", this.$route.path);
       Axios.post("/api" + this.$route.path.split("/edit")[1], {
         code: this.code
       })
