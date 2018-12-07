@@ -9,30 +9,30 @@
               nav
                 ol.breadcrumb.bg-light.mb-0
                   template(v-for="(path, ind) in paths")
-                    template(v-if="ind>1")
-                      template(v-if="ind == paths.length-1")
-                        li.breadcrumb-item.active {{path.name}}
-                      template(v-else)
-                        li.breadcrumb-item
-                          router-link(:to="path.path") {{path.name}}
+                    template(v-if="ind == paths.length-1")
+                      li.breadcrumb-item.active {{path.name}}
+                    template(v-else)
+                      li.breadcrumb-item
+                        router-link(:to="path.path") {{path.name}}
             .col-6
-              nav.navbar.navbar-expand-lg.navbar-light.bg-none.float-right
-                ul.navbar-nav
-                  li.nav-item.dropdown
-                    a.nav-link.mr-2.dropdown-toggle#createFileDropdown(href="" title="Create File" data-toggler="dropdown" aria-haspopup="true" aria-expanded="false" @click.prevent="showNewFile = !showNewFile; clickedIcon = showNewFile? 'file': ''" :class="clickedIcon == 'file'? 'text-info': ''")
-                      i.material-icons(style="font-size: 1.5em;") note_add
-                    ul.dropdown-menu(:class="showNewFile?'show':''" style="width: 25em;")
-                      li.dropdown-item
-                        form.form-inline(@submit.prevent="saveFileOrFolder")
-                          .form-group
-                            input.form-control.mr-2(name="name")
-                            button.btn.btn-info.mr-2(type="submit") Create
-                            button.btn.btn-default(type="cancel" @click.prevent="cancelSaveFileOrFolder") Cancel
-                      //li.dropdown-item
-                        span Succeed
-                  li.nav-item.dropdown
-                    a.nav-link.mr-2.dropdown-toggle#createFileDropdown(href="" title="Create File" data-toggler="dropdown" aria-haspopup="true" aria-expanded="false" @click.prevent="showNewFile = !showNewFile; clickedIcon = showNewFile? 'folder':''" :class="clickedIcon == 'folder'? 'text-info': ''")
-                      i.material-icons(style="font-size: 1.5em;") create_new_folder
+              template(v-if="!$store.state.isFileMode")
+                nav.navbar.navbar-expand-lg.navbar-light.bg-none.float-right
+                  ul.navbar-nav
+                    li.nav-item.dropdown
+                      a.nav-link.mr-2.dropdown-toggle#createFileDropdown(href="" title="Create File" data-toggler="dropdown" aria-haspopup="true" aria-expanded="false" @click.prevent="showNewFile = !showNewFile; clickedIcon = showNewFile? 'file': ''" :class="clickedIcon == 'file'? 'text-info': ''")
+                        i.material-icons(style="font-size: 1.5em;") note_add
+                      ul.dropdown-menu(:class="showNewFile?'show':''" style="width: 25em;")
+                        li.dropdown-item
+                          form.form-inline(@submit.prevent="saveFileOrFolder")
+                            .form-group
+                              input.form-control.mr-2(name="name")
+                              button.btn.btn-info.mr-2(type="submit") Create
+                              button.btn.btn-default(type="cancel" @click.prevent="cancelSaveFileOrFolder") Cancel
+                        //li.dropdown-item
+                          span Succeed
+                    li.nav-item.dropdown
+                      a.nav-link.mr-2.dropdown-toggle#createFileDropdown(href="" title="Create File" data-toggler="dropdown" aria-haspopup="true" aria-expanded="false" @click.prevent="showNewFile = !showNewFile; clickedIcon = showNewFile? 'folder':''" :class="clickedIcon == 'folder'? 'text-info': ''")
+                        i.material-icons(style="font-size: 1.5em;") create_new_folder
         .card-body.py-0
           router-view(:key="$route.fullPath")
 </template>
@@ -55,8 +55,7 @@ export default {
       return this.$store.state.paths;
     }
   },
-  created() {
-  },
+  created() {},
   methods: {
     saveFileOrFolder(e) {
       let name = e.target.elements.name.value;

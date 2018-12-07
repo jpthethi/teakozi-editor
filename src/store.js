@@ -63,7 +63,9 @@ export default new Vuex.Store({
     projectName: '',
     projects: [],
     projectDirs: [],
-    contents: []
+    contents: [],
+    isEditMode: false,
+    isFileMode: false,
   },
   mutations: {
     testsUpdated(state, tests) {
@@ -77,20 +79,26 @@ export default new Vuex.Store({
     },
     SET_PATHS(state, path) {
       state.paths = [];
-      let paths = path.split("/");
+      let paths = (path.split("/projects/")[1]).split("/");
       paths.filter((ele, ind) => {
-        let path1 = paths.slice(0, ind+1).join("/");
+        let path1 = paths.slice(0, ind + 1).join("/");
         state.paths.push({
           name: ele,
-          path: path1
+          path: "/projects/" + path1
         });
       });
     },
-    SET_CONTENTS(state, contents){
+    SET_CONTENTS(state, contents) {
       state.contents = contents;
     },
-    PUSH_CONTENT(state, content){
+    PUSH_CONTENT(state, content) {
       state.contents.push(content);
+    },
+    SET_IS_EDIT_MODE(state, isEditMode) {
+      state.isEditMode = isEditMode;
+    },
+    SET_IS_FILE_MODE(state, isFileMode) {
+      state.isFileMode = isFileMode;
     }
   },
   actions: {

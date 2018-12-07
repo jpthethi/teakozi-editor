@@ -7,6 +7,7 @@ import LogProvider from './components/LogProvider.vue';
 import LogReport from './components/LogReport.vue';
 import Content from './components/Content.vue';
 import NotFound from './components/NotFound.vue';
+import EditContent from './components/EditContent.vue';
 
 Vue.use(Router);
 
@@ -27,6 +28,13 @@ export default new Router({
     children: [{
       path: '',
       component: Content,
+    }]
+  }, {
+    path: "/edit/projects/*",
+    component: Project,
+    children: [{
+      path: "",
+      component: EditContent
     }]
   }, {
     path: "/logview",

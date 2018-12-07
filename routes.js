@@ -8,24 +8,23 @@ const teakozi = require("teakozi");
 
 const writeFile = (filePath, content) => {
   return new Promise((resolve, reject) => {
-    fs.writeFile(filePath, content, 'utf-8', err => {
+    fs.writeFile(filePath, content, "utf-8", err => {
       if (err) reject(err);
       else resolve();
     });
   });
 };
 
-const readFile = (filePath) => {
+const readFile = filePath => {
   return new Promise((resolve, reject) => {
-    fs.readFile(filePath, (err, data) => {
+    fs.readFile(filePath, "utf-8", (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });
   });
 };
 
-
-const readDirs = (dir) => {
+const readDirs = dir => {
   return new Promise((resolve, reject) => {
     fs.readdir(dir, (err, list) => {
       if (err) return reject(err);
@@ -40,10 +39,10 @@ router.get("/", (req, res) => {
 
 router.get("/api/projects", (req, res) => {
   readDirs("projects")
-    .then((list) => {
+    .then(list => {
       res.send(list);
     })
-    .catch((err) => {
+    .catch(err => {
       console.log("Error is ::::: ", err);
       res.send([]);
     });
@@ -72,7 +71,10 @@ router.get("/api/projects/:projectName", (req, res) => {
     })
     .then(() => {
       if (!fs.existsSync("projects/" + projectName + "/config/index.js"))
-        writeFile("projects/" + projectName + "/config/index.js", "module.exports={}");
+        writeFile(
+          "projects/" + projectName + "/config/index.js",
+          "module.exports={}"
+        );
     })
     .then(() => {
       mkdirp("projects/" + projectName + "/models");
@@ -84,41 +86,73 @@ router.get("/api/projects/:projectName", (req, res) => {
       mkdirp("projects/" + projectName + "/tests");
     })
     .then(() => {
-      let response = getFilesInfo("projects/" + projectName, ["config", "models", "payload", "tests"])
+      let response = {
+        contents: getFilesInfo("projects/" + projectName, [
+          "config",
+          "models",
+          "payload",
+          "tests"
+        ]),
+        isPathAFile: false
+      };
       res.send(response);
     })
-    .catch((err) => {
+    .catch(err => {
       console.log("Error is ::::: ", err);
-      res.send([]);
+      res.send({
+        contents: [],
+        isPathAFile: false
+      });
     });
 });
 
 router.get("/api/projects/:projectName/*", (req, res) => {
   console.log("Path is ::::: ", req.path.split("/api/")[1]);
   let actualPath = req.path.split("/api/")[1];
-  if (fs.existsSync(actualPath) && !fs.lstatSync(actualPath).isFile()) {
+  let isExists = fs.existsSync(actualPath);
+  let isPathAFile = fs.lstatSync(actualPath).isFile();
+  if (isExists && !isPathAFile) {
     readDirs(actualPath)
       .then(list => {
-        res.send(getFilesInfo(actualPath, list));
+        res.send({
+          contents: getFilesInfo(actualPath, list),
+          isPathAFile: false
+        });
       })
       .catch(err => {
-        res.send([]);
+        console.log("Error :::: ", err);
+        res.send({
+          contents: [],
+          isPathAFile: false
+        });
       });
-  } else if (fs.existsSync(actualPath) && fs.lstatSync(actualPath).isFile()) {
+  } else if (isExists && isPathAFile) {
+    console.log("actualPath :::: ", actualPath);
     readFile(actualPath)
       .then(content => {
-        res.send(content);
+        res.send({
+          contents: content,
+          isPathAFile: true
+        });
       })
       .catch(err => {
-        res.send([]);
+        console.log("Error :::: ", err);
+        res.send({
+          contents: [],
+          isPathAFile: true
+        });
       });
   } else {
-    res.send([]);
+    res.send({
+      contents: [],
+      isPathAFile: isPathAFile
+    });
   }
 });
 
 router.get("/api/projects/:projectName/:dir", (req, res) => {
-  let projectDirsPath = "projects/" + req.params.projectName + "/" + req.params.dir;
+  let projectDirsPath =
+    "projects/" + req.params.projectName + "/" + req.params.dir;
   readDirs(projectDirsPath)
     .then(list => {
       let response = getFilesInfo(projectDirsPath, list);
@@ -131,7 +165,14 @@ router.get("/api/projects/:projectName/:dir", (req, res) => {
 });
 
 router.get("/api/projects/:projectName/:dir/:file", (req, res) => {
-  readFile("projects/" + req.params.projectName + "/" + req.params.dir + "/" + req.params.file)
+  readFile(
+      "projects/" +
+      req.params.projectName +
+      "/" +
+      req.params.dir +
+      "/" +
+      req.params.file
+    )
     .then(content => {
       res.send(content);
     })
@@ -141,7 +182,15 @@ router.get("/api/projects/:projectName/:dir/:file", (req, res) => {
 });
 
 router.post("/api/projects/:projectName/:dir/:file", (req, res) => {
-  writeFile("projects/" + req.params.projectName + "/" + req.params.dir + "/" + req.params.file, req.body.code)
+  writeFile(
+      "projects/" +
+      req.params.projectName +
+      "/" +
+      req.params.dir +
+      "/" +
+      req.params.file,
+      req.body.code
+    )
     .then(() => {
       res.send("File Saved Successfully");
     })
@@ -171,7 +220,7 @@ router.post("/api/create_folder_file", (req, res) => {
     name: name,
     isFile: type == "file" ? true : false,
     ext: path.extname(name)
-  }
+  };
 
   if (type == "folder" && !fs.existsSync(totalPath)) {
     mkdirp(totalPath)
@@ -217,8 +266,9 @@ router.post("/api/create_folder_file", (req, res) => {
 router.post("/api/getLog", (req, res) => {
   writeFile("./sample/tests/1.yml", req.body.yaml)
     .then(() => {
-      teakozi.start("sample").
-      then((content) => {
+      teakozi
+        .start("sample")
+        .then(content => {
           console.log("content is ::: ", content);
           res.send({
             msg: "Successfully Executed Test cases with teakozi",
@@ -232,13 +282,11 @@ router.post("/api/getLog", (req, res) => {
           });
         });
     })
-    .catch((err) => {
+    .catch(err => {
       res.send({
         error: err
       });
     });
 });
-
-
 
 module.exports = router;
