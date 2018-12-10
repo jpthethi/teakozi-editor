@@ -251,4 +251,25 @@ router.post("/api/getLog", (req, res) => {
     });
 });
 
+router.post("/api/run_tests", (req, res) => {
+  console.log("inside /api/run_tests");
+  var projectName = req.query.projectName;
+  var tags = req.query.tags;
+  var absPath = req.query.path;
+  var yaml = req.body.yaml;
+  console.log("projectName :::: ", projectName, "  tags ::: ", tags, "  absPath ::: ", absPath);
+  if (req.body.yaml) {
+    writeFile(absPath, yaml)
+      .then(() => {
+        //res.send("File Saved Successfully");
+      })
+      .catch(err => {
+        console.lolg("Error came while saving");
+        res.send(err);
+      });
+  } else {
+    res.send("In else block of success");
+  }
+});
+
 module.exports = router;

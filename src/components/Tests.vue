@@ -1,17 +1,6 @@
 <template lang="pug">
   .container.mt-3
     form
-      //.form-group.row.project-row
-        .col-6
-          input.form-control(placeholder="Enter Project Name" @focusout="createProject($event.target.value)")
-        .col-6.pt-2
-          a.red.delete-project(title="Delete Project" href="" @click.prevent="deleteProject()")
-            i.fa.fa-trash-o.fa-lg
-      //.form-group.row
-        .col-sm-8
-          button.btn.btn-info(type='button', @click='getLog()') Get Log
-        .col-sm-4
-          input.form-control-file.btn.btn-info(type='file', @change='onFileUploaded')
       .form-group.row
         .col-12
           .card
@@ -24,6 +13,9 @@
                   li.nav-item
                     a.nav-link.mr-2(href="" title="Tags" @click.prevent="addTags()" :class="tests.tags != undefined?'text-info':''")
                       i.material-icons(style="font-size:1.5em;") local_offer
+                  li.nav-item
+                    a.nav-link.mr-2(href="" title="Run Test File" @click.prevent="runTests()")
+                      i.material-icons(style="font-size:1.5em;") play_arrow
                   li.nav-item
                     a.nav-link.mr-2(href="" title="Download YML File" @click.prevent="downloadYAML()")
                       i.material-icons(style="font-size:1.5em;") file_download
@@ -82,35 +74,29 @@ export default {
     };
   },
   mounted() {
-    if (this.ymlPath) {
-      console.log("YamlPath is :::: ", this.ymlPath);
-      Axios.get("/api/tests?yamlPath=" + this.ymlPath)
-        .then(res => {
-          console.log("Response is after mounted :::: ", JSON.stringify(res.data))
-          let doc = YAML.safeLoad(res.data);
-          doc = this.getValidDoc(doc);
-          this.tests = doc;
-        })
-        .catch(err => {
-          console.log("Error : ", err);
-        });
+    if (this.$store.state.code) {
+      let doc = YAML.safeLoad(this.$store.state.code);
+      doc = this.getValidDoc(doc);
+      this.tests = doc;
     }
+    // if (this.ymlPath) {
+    //   console.log("YamlPath is :::: ", this.ymlPath);
+    //   Axios.get("/api/tests?yamlPath=" + this.ymlPath)
+    //     .then(res => {
+    //       console.log("Response is after mounted :::: ", JSON.stringify(res.data))
+    //       let doc = YAML.safeLoad(res.data);
+    //       doc = this.getValidDoc(doc);
+    //       this.tests = doc;
+    //     })
+    //     .catch(err => {
+    //       console.log("Error : ", err);
+    //     });
+    // }
   },
   updated() {
     console.log("latest tests :::: ", JSON.stringify(this.tests));
   },
   methods: {
-    createProject(projectName) {
-      this.projectName = projectName;
-      Axios.post("/api/createproject", { projectName })
-        .then(res => {
-          console.log("response is : ", res);
-        })
-        .catch(err => {
-          console.log("Error while creating Project : ", err);
-        });
-    },
-    deleteProject() {},
     downloadYAML(e) {
       let yamlTests = _.cloneDeep(this.tests);
       yamlTests.steps.filter(step => {
@@ -138,7 +124,6 @@ export default {
       this.$forceUpdate();
     },
     addStep() {
-      console.log("============  ", JSON.stringify(this.step));
       this.tests.steps.push(_.cloneDeep(this.step));
     },
     stepUpdated(stepObj) {
@@ -153,7 +138,6 @@ export default {
       let reader = new FileReader();
       reader.onload = event => {
         let doc = YAML.safeLoad(event.target.result);
-        console.log("Converted JSON is :::: ", doc);
         doc = this.getValidDoc(doc);
         this.tests = doc;
       };
@@ -178,6 +162,32 @@ export default {
         }
       }
       return tests;
+    },
+    runTests() {
+      let yamlTests = _.cloneDeep(this.tests);
+      yamlTests.steps.filter(step => {
+        delete step.type;
+        return true;
+      });
+      let yamlStr = YAML.safeDump(yamlTests);
+      console.log("yamlStr ::::: ", yamlStr);
+      console.log("Project Name ::::: ", this.$store.state.projectName);
+      console.log("this.tests.tags  :::: ", this.tests.tags);
+      Axios.post(
+        "/api/run_tests?tags=" +
+          this.tests.tags +
+          "&path=" +
+          this.$route.path.split("/edit")[1] +
+          "&projectName=" +
+          this.$store.state.projectName,
+        { yaml: yamlStr }
+      )
+        .then(res => {
+          console.log("Response :::: ", JSON.stringify(res.data));
+        })
+        .catch(err => {
+          console.log("Error : ", err);
+        });
     },
     getLog() {
       let yamlTests = _.cloneDeep(this.tests);

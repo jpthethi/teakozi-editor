@@ -20,7 +20,7 @@
     "mkdirp-promise": "^5.0.1",
     "moment": "^2.22.2",
     "popper": "^1.0.1",
-    "teakozi": "^1.1.11",
+    "teakozi": "^1.2.5",
     "vue": "^2.5.17",
     "vue-codemirror": "^4.0.6",
     "vue-highlightjs": "^1.3.3",
