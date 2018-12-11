@@ -6,7 +6,7 @@ const path = require("path");
 const teakozi = require("teakozi");
 
 var apiRouter = express.Router({mergeParams: true});
-router.use("/api", apiRouter);
+router.use("/teakozi/api", apiRouter);
 
 const writeFile = (filePath, content) => {
   return new Promise((resolve, reject) => {
@@ -60,6 +60,7 @@ function getFilesInfo(relPath, list) {
 
 apiRouter.get("/projects/:projectName", (req, res) => {
   var projectName = req.params.projectName;
+  console.log("projectName ::::: ", projectName);
   mkdirp("projects")
     .then(() => {
       mkdirp("projects/" + projectName);

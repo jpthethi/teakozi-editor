@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import Axios from "axios";
 export default {
   data() {
     return {
@@ -39,7 +40,14 @@ export default {
     }
   },
   beforeMount() {
-    this.$store.dispatch("getProjects");
+    //this.$store.dispatch("getProjects");
+    Axios.get(this.$router.options.base + "/api/projects")
+      .then(res => {
+        this.$store.commit("SET_PROJECTS", res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 };
 </script>

@@ -50,12 +50,8 @@ export default {
   },
   created() {
     this.$store.commit("SET_PATHS", this.$route.path);
-    console.log(
-      "this.$store :::::: ",
-      JSON.stringify(this.$store.state.paths[0])
-    );
     this.$store.commit("SET_PROJECT_NAME", this.$store.state.paths[0].name);
-    Axios.get("/api" + this.$route.path)
+    Axios.get(this.$router.options.base + "/api" + this.$route.path)
       .then(res => {
         this.isPathAFile = res.data.isPathAFile;
         let contents = res.data.contents;
