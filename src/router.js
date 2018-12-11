@@ -15,8 +15,7 @@ export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [{
-    path: "/",
-    alias: "/teakozi",
+    path: "/teakozi",
     component: Home
   }, {
     path: "/tests",
@@ -24,14 +23,14 @@ export default new Router({
     name: "tests",
     props: true
   }, {
-    path: "/projects/*",
+    path: "/teakozi/projects/*",
     component: Project,
     children: [{
       path: '',
       component: Content,
     }]
   }, {
-    path: "/edit/projects/*",
+    path: "/teakozi/edit/projects/*",
     component: Project,
     children: [{
       path: "",
