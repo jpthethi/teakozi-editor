@@ -33,9 +33,13 @@ const readDirs = dir => {
   });
 };
 
-router.get("/", (req, res) => {
-  res.sendFile("index.html");
+router.get("/teakozi", (req, res) => {
+  res.sendFile(__dirname+"/dist/index.html");
 });
+
+// router.get("/teakozi", (req, res) => {
+//   res.redirect("/");
+// });
 
 router.get("/api/projects", (req, res) => {
   readDirs("projects")
