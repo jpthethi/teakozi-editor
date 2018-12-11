@@ -3,8 +3,10 @@ const router = express.Router();
 const mkdirp = require("mkdirp-promise");
 const fs = require("fs");
 const path = require("path");
-//const fse = require("fs-extra");
 const teakozi = require("teakozi");
+
+var apiRouter = express.Router({mergeParams: true});
+router.use("/api", apiRouter);
 
 const writeFile = (filePath, content) => {
   return new Promise((resolve, reject) => {
@@ -33,15 +35,7 @@ const readDirs = dir => {
   });
 };
 
-router.get("/teakozi", (req, res) => {
-  res.sendFile(__dirname+"/dist/index.html");
-});
-
-// router.get("/teakozi", (req, res) => {
-//   res.redirect("/");
-// });
-
-router.get("/api/projects", (req, res) => {
+apiRouter.get("/projects", (req, res) => {
   readDirs("projects")
     .then(list => {
       res.send(list);
@@ -64,7 +58,7 @@ function getFilesInfo(relPath, list) {
   return response;
 }
 
-router.get("/api/projects/:projectName", (req, res) => {
+apiRouter.get("/projects/:projectName", (req, res) => {
   var projectName = req.params.projectName;
   mkdirp("projects")
     .then(() => {
@@ -110,8 +104,8 @@ router.get("/api/projects/:projectName", (req, res) => {
     });
 });
 
-router.get("/api/projects/:projectName/*", (req, res) => {
-  let actualPath = req.path.split("/api/")[1];
+apiRouter.get("/projects/:projectName/*", (req, res) => {
+  let actualPath = req.path.substring(1);
   let isExists = fs.existsSync(actualPath);
   let isPathAFile = fs.lstatSync(actualPath).isFile();
   if (isExists && !isPathAFile) {
@@ -153,8 +147,8 @@ router.get("/api/projects/:projectName/*", (req, res) => {
   }
 });
 
-router.post("/api/projects/:projectName/*", (req, res) => {
-  let actualPath = req.path.split("/api/")[1];
+apiRouter.post("/projects/:projectName/*", (req, res) => {
+  let actualPath = req.path.substring(1);
   writeFile(actualPath, req.body.code)
     .then(() => {
       res.send("File Saved Successfully");
@@ -165,7 +159,7 @@ router.post("/api/projects/:projectName/*", (req, res) => {
     });
 });
 
-router.get("/api/tests", (req, res) => {
+apiRouter.get("/tests", (req, res) => {
   console.log("inside /api/tests ");
   readFile(req.query.yamlPath)
     .then(content => {
@@ -279,6 +273,10 @@ router.post("/api/run_tests", (req, res) => {
   } else {
     res.send("In else block of success");
   }
+});
+
+router.get("/*", (req, res) => {
+  res.sendFile(__dirname+"/dist/index.html");
 });
 
 module.exports = router;

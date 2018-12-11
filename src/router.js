@@ -13,9 +13,10 @@ Vue.use(Router);
 
 export default new Router({
   mode: 'history',
-  base: process.env.BASE_URL,
+  //base: process.env.BASE_URL,
+  base: "/teakozi",
   routes: [{
-    path: "/teakozi",
+    path: "/",
     component: Home
   }, {
     path: "/tests",
@@ -23,14 +24,14 @@ export default new Router({
     name: "tests",
     props: true
   }, {
-    path: "/teakozi/projects/*",
+    path: "/projects/*",
     component: Project,
     children: [{
       path: '',
       component: Content,
     }]
   }, {
-    path: "/teakozi/edit/projects/*",
+    path: "/edit/projects/*",
     component: Project,
     children: [{
       path: "",
