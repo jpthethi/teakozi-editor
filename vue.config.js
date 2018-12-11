@@ -1,4 +1,5 @@
 module.exports = {
+  baseUrl: "/teakozi",
   devServer: {
     port: 5000,
     open: true,
