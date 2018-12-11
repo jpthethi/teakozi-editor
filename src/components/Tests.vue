@@ -52,11 +52,11 @@ import Axios from "axios";
 import FileSaver from "file-saver";
 
 var tests;
-var step = Store.state.step;
-var getAndDeleteObj = Store.state.getAndDeleteObj;
-var postAndPutObj = Store.state.postAndPutObj;
-var localObj = Store.state.localObj;
-var checkObj = Store.state.checkObj;
+//var step = Store.state.step;
+//var getAndDeleteObj = Store.state.getAndDeleteObj;
+//var postAndPutObj = Store.state.postAndPutObj;
+//var localObj = Store.state.localObj;
+//var checkObj = Store.state.checkObj;
 
 const YAML = require("js-yaml");
 //const JP = require("jsonpath");
@@ -97,7 +97,7 @@ export default {
     console.log("latest tests :::: ", JSON.stringify(this.tests));
   },
   methods: {
-    downloadYAML(e) {
+    downloadYAML() {
       let yamlTests = _.cloneDeep(this.tests);
       yamlTests.steps.filter(step => {
         delete step.type;

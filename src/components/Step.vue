@@ -245,12 +245,12 @@
 
 <script>
 import Store from "../store.js";
-var step;
+//var step;
 var getAndDeleteObj = Store.state.getAndDeleteObj;
 var postAndPutObj = Store.state.postAndPutObj;
 var localObj = Store.state.localObj;
-var checkObj = Store.state.checkObj;
-const YAML = require("js-yaml");
+//var checkObj = Store.state.checkObj;
+//const YAML = require("js-yaml");
 
 export default {
   props: ["step", "stepIndex", "tests"],

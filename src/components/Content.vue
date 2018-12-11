@@ -50,7 +50,10 @@ export default {
   },
   created() {
     this.$store.commit("SET_PATHS", this.$route.path);
-    console.log("this.$store :::::: ", JSON.stringify(this.$store.state.paths[0]));
+    console.log(
+      "this.$store :::::: ",
+      JSON.stringify(this.$store.state.paths[0])
+    );
     this.$store.commit("SET_PROJECT_NAME", this.$store.state.paths[0].name);
     Axios.get("/api" + this.$route.path)
       .then(res => {
@@ -70,8 +73,8 @@ export default {
       });
   },
   methods: {
-    editFile(typeOfEdit){
-      this.$router.push({path: "/edit"+this.$route.path});
+    editFile() {
+      this.$router.push({ path: "/edit" + this.$route.path });
     }
   }
 };

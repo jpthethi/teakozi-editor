@@ -5,6 +5,7 @@ import router from './router';
 import store from './store';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import VueHighlightJS from 'vue-highlightjs';
+import moment from 'moment';
 
 Vue.use(VueHighlightJS);
 
@@ -13,6 +14,7 @@ Object.defineProperty(Vue.prototype, "$_", {
 });
 
 Vue.config.productionTip = false;
+Vue.prototype.moment = moment;
 
 new Vue({
   router,

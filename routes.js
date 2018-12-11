@@ -252,19 +252,24 @@ router.post("/api/getLog", (req, res) => {
 });
 
 router.post("/api/run_tests", (req, res) => {
-  console.log("inside /api/run_tests");
   var projectName = req.query.projectName;
   var tags = req.query.tags;
-  var absPath = req.query.path;
+  var absPath = req.query.path.substring(1);
   var yaml = req.body.yaml;
-  console.log("projectName :::: ", projectName, "  tags ::: ", tags, "  absPath ::: ", absPath);
   if (req.body.yaml) {
     writeFile(absPath, yaml)
       .then(() => {
-        //res.send("File Saved Successfully");
+        teakozi.start("projects/" + projectName, __dirname, {
+          tag: tags
+        }).then(log => {
+          res.send(log);
+        }).catch(err => {
+          console.log("inside error : ", err);
+          res.send(err);
+        });
       })
       .catch(err => {
-        console.lolg("Error came while saving");
+        console.log("Error ::: ", err);
         res.send(err);
       });
   } else {

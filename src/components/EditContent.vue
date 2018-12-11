@@ -77,7 +77,7 @@ export default {
     onCmChange(newCode) {
       this.code = newCode;
     },
-    saveContent(e) {
+    saveContent() {
       Axios.post("/api" + this.$route.path.split("/edit")[1], {
         code: this.code
       })

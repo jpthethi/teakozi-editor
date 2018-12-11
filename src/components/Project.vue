@@ -83,7 +83,7 @@ export default {
           console.log("Error : ", err);
         });
     },
-    cancelSaveFileOrFolder(e) {
+    cancelSaveFileOrFolder() {
       this.showNewFile = false;
       this.clickedIcon = "";
     }

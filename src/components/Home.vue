@@ -31,7 +31,7 @@ export default {
     },
     newProjectName: {
       set(name) {
-        this.pName;
+        this.pName = name;
       },
       get() {
         return this.pName;
