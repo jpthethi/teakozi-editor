@@ -59,7 +59,9 @@ export default {
     this.$store.commit("SET_PROJECT_NAME", this.$store.state.paths[0].name);
     this.$store.commit("SET_IS_FILE_MODE", true);
     this.code = this.$store.state.code;
-    Axios.get("/api" + this.$route.path.split("/edit")[1])
+    Axios.get(
+      this.$router.options.base + "/api" + this.$route.path.split("/edit")[1]
+    )
       .then(res => {
         let contents = res.data.contents;
         this.code = contents;
@@ -78,9 +80,12 @@ export default {
       this.code = newCode;
     },
     saveContent() {
-      Axios.post("/api" + this.$route.path.split("/edit")[1], {
-        code: this.code
-      })
+      Axios.post(
+        this.$router.options.base + "/api" + this.$route.path.split("/edit")[1],
+        {
+          code: this.code
+        }
+      )
         .then(res => {
           console.log("Response : ", JSON.stringify(res));
           this.$router.push({ path: this.$route.path.split("/edit")[1] });

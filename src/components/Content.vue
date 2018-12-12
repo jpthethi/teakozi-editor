@@ -18,10 +18,10 @@
             nav.navbar.navbar-expand-lg.navbar-light.bg-none.float-right.p-0
               ul.navbar-nav
                 li.nav-item
-                  a.nav-link.mr-2(href="" :to="'/edit'+$route.path" title="Edit As Raw File" @click.prevent="$store.commit('SET_EDIT_MODE', 'raw');editFile();")
+                  a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Edit As Raw File" @click.prevent="$store.commit('SET_EDIT_MODE', 'raw');editFile();")
                     i.material-icons(style="font-size: 1.5em;") edit
                 li.nav-item
-                  a.nav-link.mr-2(href="" :to="'/edit'+$route.path" title="Edit in Teakozi Editor" @click.prevent="$store.commit('SET_EDIT_MODE', 'teditor');editFile();")
+                  a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Edit in Teakozi Editor" @click.prevent="$store.commit('SET_EDIT_MODE', 'teditor');editFile();")
                     i.material-icons(style="font-size: 1.5em;") language
           tbody
             tr

@@ -5,7 +5,9 @@ const fs = require("fs");
 const path = require("path");
 const teakozi = require("teakozi");
 
-var apiRouter = express.Router({mergeParams: true});
+var apiRouter = express.Router({
+  mergeParams: true
+});
 router.use("/teakozi/api", apiRouter);
 
 const writeFile = (filePath, content) => {
@@ -76,6 +78,9 @@ apiRouter.get("/projects/:projectName", (req, res) => {
         );
     })
     .then(() => {
+      mkdirp("projects/" + projectName + "/logs");
+    })
+    .then(() => {
       mkdirp("projects/" + projectName + "/models");
     })
     .then(() => {
@@ -88,6 +93,7 @@ apiRouter.get("/projects/:projectName", (req, res) => {
       let response = {
         contents: getFilesInfo("projects/" + projectName, [
           "config",
+          "logs",
           "models",
           "payload",
           "tests"
@@ -171,7 +177,7 @@ apiRouter.get("/tests", (req, res) => {
     });
 });
 
-router.post("/api/create_folder_file", (req, res) => {
+apiRouter.post("/create_folder_file", (req, res) => {
   var absPath = req.query.path;
   var name = req.query.name;
   var type = req.query.type;
@@ -250,34 +256,48 @@ router.post("/api/getLog", (req, res) => {
     });
 });
 
-router.post("/api/run_tests", (req, res) => {
+apiRouter.post("/run_tests", (req, res) => {
   var projectName = req.query.projectName;
   var tags = req.query.tags;
   var absPath = req.query.path.substring(1);
   var yaml = req.body.yaml;
+  console.log("absPath :::: ", absPath);
   if (req.body.yaml) {
     writeFile(absPath, yaml)
       .then(() => {
         teakozi.start("projects/" + projectName, __dirname, {
           tag: tags
         }).then(log => {
-          res.send(log);
+          console.log("inside log : ", log);
+          res.send({
+            msg: "Successfully Executed Test cases with teakozi",
+            testResponse: log
+          });
         }).catch(err => {
-          console.log("inside error : ", err);
-          res.send(err);
+          console.log("inside teakozi catch error : ", err);
+          res.send({
+            msg: "Error came while teakozi test execution",
+            error: err
+          });
         });
       })
       .catch(err => {
         console.log("Error ::: ", err);
-        res.send(err);
+        res.send({
+          error: err
+        });
       });
   } else {
-    res.send("In else block of success");
+    res.send("Entered wrong values");
+    res.send({
+      msg: "Entered wrong YAML",
+      error: new Error("Entered wrong YAML")
+    });
   }
 });
 
 router.get("/*", (req, res) => {
-  res.sendFile(__dirname+"/dist/index.html");
+  res.sendFile(__dirname + "/dist/index.html");
 });
 
 module.exports = router;

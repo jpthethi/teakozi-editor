@@ -60,10 +60,12 @@ export default {
   created() {},
   methods: {
     saveFileOrFolder(e) {
+      console.log("this.$route.path ::::: ", this.$route.path);
       let name = e.target.elements.name.value;
       let type = this.clickedIcon;
       Axios.post(
-        "/api/create_folder_file?path=" +
+        this.$router.options.base +
+          "/api/create_folder_file?path=" +
           this.$route.path +
           "&name=" +
           name +

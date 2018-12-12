@@ -174,7 +174,8 @@ export default {
       console.log("Project Name ::::: ", this.$store.state.projectName);
       console.log("this.tests.tags  :::: ", this.tests.tags);
       Axios.post(
-        "/api/run_tests?tags=" +
+        this.$router.options.base +
+          "/api/run_tests?tags=" +
           this.tests.tags +
           "&path=" +
           this.$route.path.split("/edit")[1] +
@@ -184,6 +185,12 @@ export default {
       )
         .then(res => {
           console.log("Response :::: ", JSON.stringify(res.data));
+          if (res.data.err == undefined) {
+            this.$router.push({
+              name: "logreport",
+              params: { log: res.data.testResponse }
+            });
+          }
         })
         .catch(err => {
           console.log("Error : ", err);
