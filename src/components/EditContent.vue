@@ -19,7 +19,7 @@
               template(v-if="$store.state.editMode == 'raw'")
                 codemirror(ref="myCm" :value="code" :options="cmOptions" @input="onCmChange")                
               template(v-else)
-                tests(:ymlPath="$route.path.split('/edit/')[1]")
+                edit-tests(:ymlPath="$route.path.split('/edit/')[1]")
 </template>
 
 <script>
@@ -28,7 +28,7 @@ import { codemirror } from "vue-codemirror";
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/javascript/javascript.js";
 import "codemirror/theme/base16-light.css";
-import TestsVue from "./Tests.vue";
+import EditTestsVue from "./EditTests";
 export default {
   data() {
     return {
@@ -52,7 +52,7 @@ export default {
   },
   components: {
     codemirror,
-    tests: TestsVue
+    editTests: EditTestsVue
   },
   created() {
     this.$store.commit("SET_PATHS", this.$route.path);

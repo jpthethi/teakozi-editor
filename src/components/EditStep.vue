@@ -46,10 +46,11 @@
     .card-body
       .form-group.row
         label.col-sm-2.col-form-label(for='') Name
-        label.col-sm-2.col-form-label(for='') step.name
+        .col-sm-10
+          input.form-control(type='text', v-model='step.name' @focusout="$forceUpdate()")
       .form-group.row
         .col-sm-2
-          select.form-control(v-model='step.type', @change='stepTypeChanged(step)' disabled)
+          select.form-control(v-model='step.type', @change='stepTypeChanged(step)')
             option(value='get') GET
             option(value='post') POST
             option(value='put') PUT
@@ -60,15 +61,18 @@
             template(v-if="stepTypeKey == 'file'")
               .form-group.row(:key='stepTypeKey')
                 label.col-sm-2.col-form-label(for='') {{stepTypeKey}}
-                label.col-sm-10.col-form-label(for='') {{step[step.type].file}}
+                .col-sm-10
+                  input.form-control(v-model='step[step.type].file', @keydown='$forceUpdate()')
             template(v-if="stepTypeKey == 'url'")
               .form-group.row(:key='stepTypeKey')
                 label.col-sm-2.col-form-label(for='') {{stepTypeKey}}
-                label.col-sm-10.col-form-label(for='') {{step[step.type].url}}
+                .col-sm-10
+                  input.form-control(v-model='step[step.type].url', @keydown='$forceUpdate()')
             template(v-if="stepTypeKey == 'json'")
               .form-group.row(:key='stepTypeKey')
                 label.col-2.col-form-label(for='') {{stepTypeKey}}
-                label.col-2.col-form-label(for='') {{step[step.type].json}}
+                .col-10
+                  input.form-control(v-model='step[step.type].json', @keydown='$forceUpdate()')
             template(v-if="stepTypeKey =='headers'")
               .form-group.row(:key='stepTypeKey')
                 label.col-2.col-form-label(for='') {{stepTypeKey}}
@@ -76,9 +80,14 @@
                   template(v-for='(headerVal, headerKey ) in stepTypeVal')
                     .form-group.row(:key='headerKey')
                       .col-5
-                        label.col-form-label(for='') {{headerKey}}
+                        input.form-control(placeholder='Authorization', :value='headerKey', @focusout='addHeaderKey($event.target.value)')
                       .col-5
-                        label.col-form-label(for='') {{step[step.type].headers[headerKey]}}
+                        input.form-control(placeholder='Basic ***', v-model='step[step.type].headers[headerKey]', @focusout='$forceUpdate()')
+                      .col-2
+                        a(href='', @click.prevent='removeHeader(headerKey)', title="Remove Header")
+                          i.fa.fa-trash-o.fa-lg
+                  a(href='', @click.prevent='addHeader()', title="Add Header")
+                    i.material-icons(style="font-size:1.5em;") library_add
             template(v-if="stepTypeKey == 'override'")
               .form-group.row(:key='stepTypeKey')
                 label.col-2.col-form-label {{stepTypeKey}}
@@ -102,15 +111,21 @@
       template(v-if="step.iterate != undefined")
         .form-group.row
           label.col-2.col-form-label(for='') Iterate
-          label.col-10.col-form-label(for='') {{step.iterate}}
+          .col-10
+            input.form-control(type='text', name='', v-model='step.iterate' @focusout="$forceUpdate()")
       template(v-if="step.print != undefined")
         .form-group.row
           label.col-sm-2.col-form-label(for='', name='') Print
           .col-sm-10
             template(v-for='(print, printIndex) in step.print')
               .form-group.row
-                .col-12
-                  label.col-form-label(for='', name='') {{step.print[printIndex]}}
+                .col-11
+                  input.form-control(v-model="step.print[printIndex]" @focusout="$forceUpdate()")
+                .col-1
+                  a(href='', @click.prevent='removePrint(printIndex)', title="Remove Print")
+                    i.fa.fa-trash-o.fa-lg
+            a(href='', @click.prevent='addPrint()', title="Add Print Variables")
+              i.material-icons(style="font-size:1.5em;") library_add
       .form-group.row
         label.col-sm-2.col-form-label(for='', name='') Check
         .col-sm-10
@@ -118,11 +133,13 @@
             template(v-if="checkKey == 'status'")
               .form-group.row
                 label.col-sm-2.col-form-label(for='', name='') Status
-                label.col-sm-10.col-form-label(for='', name='') {{step.check.status}}                
+                .col-sm-10
+                  input.form-control(type='text', name='', v-model='step.check.status' @focusout="$forceUpdate()")
             template(v-if="checkKey == 'schema'")
               .form-group.row
                 label.col-2.col-form-label(for='') Schema
-                label.col-10.col-form-label(for='') {{step.check.schema}}
+                .col-10
+                  input.form-control(type='text', name='', v-model='step.check.schema' @focusout="$forceUpdate()")
             template(v-if="checkKey == 'body'")
               .form-group.row
                 label.col-2.col-form-label Body
@@ -134,10 +151,15 @@
                         .col-10
                           template(v-for='(checkBodyEqVal, checkBodyEqKey) in checkBodyVal')
                             .form-group.row
-                              .col-6
-                                label.col-form-label {{checkBodyEqKey}}
-                              .col-6
-                                label.col-form-label {{step.check.body.eq[checkBodyEqKey]}}
+                              .col-5
+                                input.form-control(:value='checkBodyEqKey', @focusout='addEqualCheckKey($event.target.value)')
+                              .col-5
+                                input.form-control(v-model='step.check.body.eq[checkBodyEqKey]', @focusout='$forceUpdate()')
+                              .col-2
+                                a(href='', @click.prevent='removeEqualCheck(checkBodyEqKey)', title="Remove Eq check")
+                                  i.fa.fa-trash-o.fa-lg
+                          a(href='', @click.prevent='addEqualCheck()', title="Add Equal Check")
+                            i.material-icons(style="font-size:1.5em;") library_add
                     template(v-if="checkBodyKey == 'neq'")
                       .form-group.row
                         label.col-2.col-form-label neq
@@ -145,9 +167,14 @@
                           template(v-for='(checkBodyNeqVal, checkBodyNeqKey) in checkBodyVal')
                             .form-group.row
                               .col-5
-                                label.col-form-label {{checkBodyNeqKey}}
+                                input.form-control(:value='checkBodyNeqKey', @focusout='addNequalCheckKey($event.target.value)')
                               .col-5
-                                label.col-form-label {{step.check.body.neq[checkBodyNeqKey]}}
+                                input.form-control(v-model='step.check.body.neq[checkBodyNeqKey]', @focusout='$forceUpdate()')
+                              .col-2
+                                a(href='', @click.prevent='removeNequalCheck(checkBodyNeqKey)', title="Remove Neq Check")
+                                  i.fa.fa-trash-o.fa-lg
+                          a(href='', @click.prevent='addNequalCheck()', title="Add Neq Check")
+                            i.material-icons(style="font-size:1.5em;") library_add
                     template(v-if="checkBodyKey == 'null'")
                       .form-group.row
                         label.col-sm-2.col-form-label(for='', name='') null
@@ -155,42 +182,62 @@
                           template(v-for='(nullVal, nullIndex) in checkBodyVal')
                             .form-group.row
                               .col-10
-                                label.col-form-label {{step.check.body.null[nullIndex]}}
+                                input.form-control(v-model='step.check.body.null[nullIndex]')
+                              .col-2
+                                a(href='', @click.prevent='removeNull(nullIndex)', title="Remove Null Check")
+                                  i.fa.fa-trash-o.fa-lg
+                          a(href='', @click.prevent='addNull()', title="Add Null Check")
+                            i.material-icons(style="font-size:1.5em;") library_add
                     template(v-if="checkBodyKey == 'deepEqual'")
                       .form-group.row
                         label.col-2.col-form-label deepEqual
                         .col-10
                           template(v-for='(checkBodyDeepEqVal, checkBodyDeepEqKey) in checkBodyVal')
                             .form-group.row
-                              .col-6
-                                label.col-form-label {{checkBodyDeepEqKey}}
-                              .col-6
-                                label.col-form-label {{step.check.body.deepEqual[checkBodyDeepEqKey]}}
+                              .col-5
+                                input.form-control(:value='checkBodyDeepEqKey', @focusout='addDeepEqCheckKey($event.target.value)')
+                              .col-5
+                                input.form-control(v-model='step.check.body.deepEqual[checkBodyDeepEqKey]', @focusout='$forceUpdate()')
+                              .col-2
+                                a(href='', @click.prevent='removeDeepEqCheck(checkBodyDeepEqKey)', title="Remove Deep Equal Check")
+                                  i.fa.fa-trash-o.fa-lg
+                          a(href='', @click.prevent='addDeepEqCheck()', title="Add Deep Equal Check")
+                            i.material-icons(style="font-size:1.5em;") library_add
                     template(v-if="checkBodyKey == 'regex'")
                       .form-group.row
                         label.col-2.col-form-label regex
                         .col-10
                           template(v-for='(checkBodyRegexVal, checkBodyRegexKey) in checkBodyVal')
                             .form-group.row
-                              .col-6
-                                label.col-2.col-form-label {{checkBodyRegexKey}}
-                              .col-6
-                                label.col-form-label {{step.check.body.regex[checkBodyRegexKey]}}
+                              .col-5
+                                input.form-control(:value='checkBodyRegexKey', @focusout='addRegexCheckKey($event.target.value)')
+                              .col-5
+                                input.form-control(v-model='step.check.body.regex[checkBodyRegexKey]', @focusout='$forceUpdate()')
+                              .col-2
+                                a(href='', @click.prevent='removeRegexCheck(checkBodyRegexKey)', title="Remove Regex Check")
+                                  i.fa.fa-trash-o.fa-lg
+                          a(href='', @click.prevent='addRegexCheck()', title="Add Regex Check")
+                            i.material-icons(style="font-size:1.5em;") library_add
       template(v-if="step.collect != undefined")
         .form-group.row
           label.col-2.col-form-label Collect
           .col-10
             template(v-for='(collectVal, collectKey) in step.collect')
               .form-group.row
-                .col-6
-                  label.col-2.col-form-label {{collectKey}}
-                .col-6
-                  label.col-2.col-form-label {{step.collect[collectKey]}}
+                .col-5
+                  input.form-control(:value='collectKey', @focusout='addCollectKey($event.target.value)', placeholder='gist_id')
+                .col-5
+                  input.form-control(v-model='step.collect[collectKey]', placeholder='$.id', @focusout='$forceUpdate()')
+                .col-2
+                  a(href='', @click.prevent='removeCollect(collectKey)', title="Remove Collect")
+                    i.fa.fa-trash-o.fa-lg
+            a(href='', @click.prevent='addCollect()', title="Add Collect")
+              i.material-icons(style="font-size:1.5em;") library_add
       template(v-if="step.skip_on_error != undefined")
         .form-group.row
           label.col-2.col-form-label Skip On Error
           .col-10
-            select.form-control(v-model='step.skip_on_error' disabled)
+            select.form-control(v-model='step.skip_on_error')
               option(value='true') TRUE
               option(value='false') FALSE
 

@@ -26,19 +26,26 @@
           tbody
             tr
               td
-                pre(v-highlightjs="code")
-                  code.javascript
+                template(v-if="!$store.state.inTests")
+                  pre(v-highlightjs="code")
+                    code.javascript
+                template(v-else)
+                  tests(:ymlPath="$route.path.split('/edit/')[1]")
 </template>
 
 <script>
 import Axios from "axios";
 import "highlight.js/styles/a11y-light.css";
+import TestsVue from "./Tests";
 export default {
   data() {
     return {
       isPathAFile: false,
       code: ""
     };
+  },
+  components: {
+    tests: TestsVue
   },
   computed: {
     contents() {

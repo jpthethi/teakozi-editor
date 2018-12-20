@@ -67,7 +67,8 @@ export default new Vuex.Store({
     isEditMode: false,
     isFileMode: false,
     editMode: 'raw',
-    code: ''
+    code: '',
+    inTests: false
   },
   mutations: {
     testsUpdated(state, tests) {
@@ -89,6 +90,12 @@ export default new Vuex.Store({
           path: "/projects/" + path1
         });
       });
+
+      if (paths[1] == 'tests') {
+        state.inTests = true;
+      } else {
+        state.inTests = false;
+      }
     },
     SET_CONTENTS(state, contents) {
       state.contents = contents;
@@ -102,11 +109,14 @@ export default new Vuex.Store({
     SET_IS_FILE_MODE(state, isFileMode) {
       state.isFileMode = isFileMode;
     },
-    SET_EDIT_MODE(state, editMode){
+    SET_EDIT_MODE(state, editMode) {
       state.editMode = editMode;
     },
-    SET_CODE(state, code){
+    SET_CODE(state, code) {
       state.code = code;
+    },
+    SET_IN_TESTS(state, inTests) {
+      state.inTests = inTests;
     }
   },
   actions: {

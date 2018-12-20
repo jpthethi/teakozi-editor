@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './components/Home.vue';
-import Tests from './components/Tests.vue';
+//import Tests from './components/Tests.vue';
+import EditTests from './components/EditTests.vue';
 import Project from './components/Project.vue';
 import LogProvider from './components/LogProvider.vue';
 import LogReport from './components/LogReport.vue';
@@ -20,7 +21,7 @@ export default new Router({
     component: Home
   }, {
     path: "/tests",
-    component: Tests,
+    component: EditTests,
     name: "tests",
     props: true
   }, {

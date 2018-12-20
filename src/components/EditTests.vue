@@ -22,15 +22,18 @@
             .card-body
               .form-group.row
                 label.col-sm-2.col-form-label(for='') Name
-                label.col-sm-10.col-form-label(for='') {{tests.name}}
+                .col-sm-10
+                  input.form-control(type='text', v-model='tests.name', placeholder='Eg: Tetst 1')
               template(v-if="tests.tags != undefined")
                 .form-group.row
                   label.col-sm-2.col-form-label(for='') Tags
-                  label.col-sm-10.col-form-label(for='') {{tests.tags}}
+                  .col-sm-10
+                    input.form-control(type='text' placeholder='Eg: github, need_local_server' v-model='tests.tags' @focusout="$forceUpdate()")
               template(v-if="tests.iterate != undefined")
                 .form-group.row
                   label.col-sm-2.col-form-label(for='') Iterate
-                  label.col-sm-10.col-form-label(for='') {{tests.iterate}}
+                  .col-sm-10
+                    input.form-control(type='text' v-model='tests.iterate' placeholder='Eg: many_runs' @focusout="$forceUpdate()")
               .form-group.row
                 label.col-2.col-form-label(for='') Steps
                 .col-10
@@ -43,7 +46,7 @@
 </template>
 
 <script>
-import Step from "./Step.vue";
+import EditStep from "./EditStep.vue";
 import Store from "../store.js";
 import Axios from "axios";
 import FileSaver from "file-saver";
@@ -61,7 +64,7 @@ const YAML = require("js-yaml");
 export default {
   props: ["ymlPath"],
   components: {
-    "app-step": Step
+    "app-step": EditStep
   },
   data: function() {
     return {
@@ -76,19 +79,6 @@ export default {
       doc = this.getValidDoc(doc);
       this.tests = doc;
     }
-    // if (this.ymlPath) {
-    //   console.log("YamlPath is :::: ", this.ymlPath);
-    //   Axios.get("/api/tests?yamlPath=" + this.ymlPath)
-    //     .then(res => {
-    //       console.log("Response is after mounted :::: ", JSON.stringify(res.data))
-    //       let doc = YAML.safeLoad(res.data);
-    //       doc = this.getValidDoc(doc);
-    //       this.tests = doc;
-    //     })
-    //     .catch(err => {
-    //       console.log("Error : ", err);
-    //     });
-    // }
   },
   updated() {
     console.log("latest tests :::: ", JSON.stringify(this.tests));
