@@ -16,8 +16,8 @@
         tbody
           tr
             td
-              template(v-if="$store.state.editMode == 'raw'")
-                codemirror(ref="myCm" :value="code" :options="cmOptions" @input="onCmChange")                
+              template(v-if="!$store.state.inTests")
+                codemirror(ref="myCm" :value="code" :options="cmOptions" @input="onCmChange")
               template(v-else)
                 edit-tests(:ymlPath="$route.path.split('/edit/')[1]")
 </template>
@@ -64,8 +64,9 @@ export default {
     )
       .then(res => {
         let contents = res.data.contents;
-        this.code = contents;
         this.$store.commit("SET_CODE", contents);
+        this.code = contents;
+        this.$forceUpdate();
         console.log("response data :::: ", JSON.stringify(contents));
       })
       .catch(err => {
@@ -80,19 +81,22 @@ export default {
       this.code = newCode;
     },
     saveContent() {
-      Axios.post(
-        this.$router.options.base + "/api" + this.$route.path.split("/edit")[1],
-        {
-          code: this.code
-        }
-      )
-        .then(res => {
-          console.log("Response : ", JSON.stringify(res));
-          this.$router.push({ path: this.$route.path.split("/edit")[1] });
-        })
-        .catch(err => {
-          console.log("Error : ", err);
-        });
+
+      console.log("code ::: ", this.code);
+
+      // Axios.post(
+      //   this.$router.options.base + "/api" + this.$route.path.split("/edit")[1],
+      //   {
+      //     code: this.code
+      //   }
+      // )
+      //   .then(res => {
+      //     console.log("Response : ", JSON.stringify(res));
+      //     this.$router.push({ path: this.$route.path.split("/edit")[1] });
+      //   })
+      //   .catch(err => {
+      //     console.log("Error : ", err);
+      //   });
     }
   }
 };

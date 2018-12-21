@@ -21,8 +21,8 @@
                   a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Edit As Raw File" @click.prevent="$store.commit('SET_EDIT_MODE', 'raw');editFile();")
                     i.material-icons(style="font-size: 1.5em;") edit
                 li.nav-item
-                  a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Edit in Teakozi Editor" @click.prevent="$store.commit('SET_EDIT_MODE', 'teditor');editFile();")
-                    i.material-icons(style="font-size: 1.5em;") language
+                  a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Run All Test Files" @click.prevent="")
+                    i.material-icons(style="font-size: 1.5em;") play_circle_filled
           tbody
             tr
               td

@@ -8,13 +8,13 @@
               nav.navbar.navbar-expand-md.navbar-light.bg-light.pull-right
                 ul.navbar-nav
                   li.nav-item
-                    a.nav-link.mr-2(href="" title="Iterate" @click.prevent="addIterate2Tests()" :class="tests.iterate != undefined?'text-info':''")
+                    a.nav-link.mr-2(href="" title="Iterate" @click.prevent="" :class="tests.iterate != undefined?'text-info':''")
                       i.material-icons(style="font-size:1.5em;") loop
                   li.nav-item
-                    a.nav-link.mr-2(href="" title="Tags" @click.prevent="addTags()" :class="tests.tags != undefined?'text-info':''")
+                    a.nav-link.mr-2(href="" title="Tags" @click.prevent="" :class="tests.tags != undefined?'text-info':''")
                       i.material-icons(style="font-size:1.5em;") local_offer
                   li.nav-item
-                    a.nav-link.mr-2(href="" title="Run Test File" @click.prevent="runTests()")
+                    a.nav-link.mr-2(href="" title="Run Current Test File" @click.prevent="runTests()")
                       i.material-icons(style="font-size:1.5em;") play_arrow
                   li.nav-item
                     a.nav-link.mr-2(href="" title="Download YML File" @click.prevent="downloadYAML()")
@@ -36,10 +36,6 @@
                 .col-10
                   template(v-for='(step, stepIndex) in tests.steps')
                     app-step.mb-5(v-bind:step='step' v-bind:step-index="stepIndex" v-bind:tests="tests" @stepUpdated="stepUpdated")
-                  .form-group.row.mt-2
-                    .col-12
-                      a(href='', @click.prevent='addStep()', title='Add Step')
-                        i.material-icons(style="font-size:1.5em;") library_add
 </template>
 
 <script>
@@ -49,14 +45,7 @@ import Axios from "axios";
 import FileSaver from "file-saver";
 
 var tests;
-//var step = Store.state.step;
-//var getAndDeleteObj = Store.state.getAndDeleteObj;
-//var postAndPutObj = Store.state.postAndPutObj;
-//var localObj = Store.state.localObj;
-//var checkObj = Store.state.checkObj;
-
 const YAML = require("js-yaml");
-//const JP = require("jsonpath");
 
 export default {
   props: ["ymlPath"],
@@ -76,23 +65,8 @@ export default {
       doc = this.getValidDoc(doc);
       this.tests = doc;
     }
-    // if (this.ymlPath) {
-    //   console.log("YamlPath is :::: ", this.ymlPath);
-    //   Axios.get("/api/tests?yamlPath=" + this.ymlPath)
-    //     .then(res => {
-    //       console.log("Response is after mounted :::: ", JSON.stringify(res.data))
-    //       let doc = YAML.safeLoad(res.data);
-    //       doc = this.getValidDoc(doc);
-    //       this.tests = doc;
-    //     })
-    //     .catch(err => {
-    //       console.log("Error : ", err);
-    //     });
-    // }
   },
-  updated() {
-    console.log("latest tests :::: ", JSON.stringify(this.tests));
-  },
+  updated() {},
   methods: {
     downloadYAML() {
       let yamlTests = _.cloneDeep(this.tests);
@@ -104,42 +78,8 @@ export default {
       const blob = new Blob([yamlStr], { type: "text/plain;charset=urf-8" });
       FileSaver.saveAs(blob, "test.yml");
     },
-    addTags() {
-      if (this.tests.tags == undefined) {
-        this.tests.tags = "";
-      } else {
-        delete this.tests.tags;
-      }
-      this.$forceUpdate();
-    },
-    addIterate2Tests() {
-      if (this.tests.iterate == undefined) {
-        this.tests.iterate = "";
-      } else {
-        delete this.tests.iterate;
-      }
-      this.$forceUpdate();
-    },
-    addStep() {
-      this.tests.steps.push(_.cloneDeep(this.step));
-    },
     stepUpdated(stepObj) {
       this.tests.steps[stepObj[0]] = stepObj[1];
-    },
-    onFileUploaded(e) {
-      let files = e.target.files || e.dataTransfer.files;
-      if (!files.length) return;
-      if (files[0].name.indexOf(".yml") != -1) this.readFile(files[0]);
-    },
-    readFile(file) {
-      let reader = new FileReader();
-      reader.onload = event => {
-        let doc = YAML.safeLoad(event.target.result);
-        doc = this.getValidDoc(doc);
-        this.tests = doc;
-      };
-      reader.onerror = error => console.error(error);
-      reader.readAsText(file);
     },
     getValidDoc(tests) {
       let steps = tests.steps;
@@ -167,9 +107,6 @@ export default {
         return true;
       });
       let yamlStr = YAML.safeDump(yamlTests);
-      console.log("yamlStr ::::: ", yamlStr);
-      console.log("Project Name ::::: ", this.$store.state.projectName);
-      console.log("this.tests.tags  :::: ", this.tests.tags);
       Axios.post(
         this.$router.options.base +
           "/api/run_tests?tags=" +
@@ -191,31 +128,6 @@ export default {
         })
         .catch(err => {
           console.log("Error : ", err);
-        });
-    },
-    getLog() {
-      let yamlTests = _.cloneDeep(this.tests);
-      delete yamlTests.iterate;
-      yamlTests.steps.filter(step => {
-        delete step.type;
-        delete step.iterate;
-        return true;
-      });
-      let yamlStr = YAML.safeDump(yamlTests);
-      console.log("Sending this.tests are :::: ", JSON.stringify(yamlTests));
-      console.log(yamlStr);
-
-      Axios.post("/api/getLog", { yaml: yamlStr })
-        .then(res => {
-          console.log("response ::::: ", res);
-          console.log("log report is ::::: ", res);
-          this.$router.push({
-            name: "logreport",
-            params: { log: res.data.testResponse }
-          });
-        })
-        .catch(err => {
-          console.log("Error ::: ", err);
         });
     }
   }

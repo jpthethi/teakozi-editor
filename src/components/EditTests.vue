@@ -78,6 +78,8 @@ export default {
       let doc = YAML.safeLoad(this.$store.state.code);
       doc = this.getValidDoc(doc);
       this.tests = doc;
+    } else {
+      console.log("inside else mounted");
     }
   },
   updated() {
