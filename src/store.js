@@ -117,6 +117,9 @@ export default new Vuex.Store({
     },
     SET_IN_TESTS(state, inTests) {
       state.inTests = inTests;
+    },
+    SET_TESTS(state, tests) {
+      state.tests = tests;
     }
   },
   actions: {
@@ -137,7 +140,7 @@ export default new Vuex.Store({
         .catch(err => {
           console.log("Error is :::: ", err);
         });
-    }
+    },
   },
   getters: {}
 });

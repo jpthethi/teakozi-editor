@@ -19,7 +19,7 @@
               template(v-if="!$store.state.inTests")
                 codemirror(ref="myCm" :value="code" :options="cmOptions" @input="onCmChange")
               template(v-else)
-                edit-tests(:ymlPath="$route.path.split('/edit/')[1]")
+                edit-tests(:ymlPath="$route.path.split('/edit/')[1]" :key="edit_tests_key")
 </template>
 
 <script>
@@ -29,9 +29,12 @@ import "codemirror/lib/codemirror.css";
 import "codemirror/mode/javascript/javascript.js";
 import "codemirror/theme/base16-light.css";
 import EditTestsVue from "./EditTests";
+
+const YAML = require("js-yaml");
 export default {
   data() {
     return {
+      edit_tests_key: 0,
       code: "",
       cmOptions: {
         tabSize: 4,
@@ -58,16 +61,13 @@ export default {
     this.$store.commit("SET_PATHS", this.$route.path);
     this.$store.commit("SET_PROJECT_NAME", this.$store.state.paths[0].name);
     this.$store.commit("SET_IS_FILE_MODE", true);
-    this.code = this.$store.state.code;
     Axios.get(
       this.$router.options.base + "/api" + this.$route.path.split("/edit")[1]
     )
       .then(res => {
-        let contents = res.data.contents;
-        this.$store.commit("SET_CODE", contents);
-        this.code = contents;
-        this.$forceUpdate();
-        console.log("response data :::: ", JSON.stringify(contents));
+        this.$store.commit("SET_CODE", res.data.contents);
+        this.code = this.$store.state.code;
+        this.edit_tests_key = 1;
       })
       .catch(err => {
         console.log("Error ::: ", err);
@@ -81,22 +81,29 @@ export default {
       this.code = newCode;
     },
     saveContent() {
+      if (this.$store.state.inTests) {
+        let yamlTests = _.cloneDeep(this.$store.state.tests);
+        yamlTests.steps.filter(step => {
+          delete step.type;
+          return true;
+        });
+        let yamlStr = YAML.safeDump(yamlTests);
+        this.code = yamlStr;
+      }
 
-      console.log("code ::: ", this.code);
-
-      // Axios.post(
-      //   this.$router.options.base + "/api" + this.$route.path.split("/edit")[1],
-      //   {
-      //     code: this.code
-      //   }
-      // )
-      //   .then(res => {
-      //     console.log("Response : ", JSON.stringify(res));
-      //     this.$router.push({ path: this.$route.path.split("/edit")[1] });
-      //   })
-      //   .catch(err => {
-      //     console.log("Error : ", err);
-      //   });
+      Axios.post(
+        this.$router.options.base + "/api" + this.$route.path.split("/edit")[1],
+        {
+          code: this.code
+        }
+      )
+        .then(res => {
+          console.log("Response : ", JSON.stringify(res));
+          this.$router.push({ path: this.$route.path.split("/edit")[1] });
+        })
+        .catch(err => {
+          console.log("Error : ", err);
+        });
     }
   }
 };

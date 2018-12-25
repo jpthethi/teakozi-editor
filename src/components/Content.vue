@@ -21,7 +21,7 @@
                   a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Edit As Raw File" @click.prevent="$store.commit('SET_EDIT_MODE', 'raw');editFile();")
                     i.material-icons(style="font-size: 1.5em;") edit
                 li.nav-item
-                  a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Run All Test Files" @click.prevent="")
+                  a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Run All Test Files" @click.prevent="runAllTests()")
                     i.material-icons(style="font-size: 1.5em;") play_circle_filled
           tbody
             tr
@@ -78,6 +78,25 @@ export default {
   methods: {
     editFile() {
       this.$router.push({ path: "/edit" + this.$route.path });
+    },
+    runAllTests() {
+      Axios.get(
+        this.$router.options.base +
+          "/api/run_tests?projectName=" +
+          this.$store.state.projectName
+      )
+        .then(res => {
+          console.log("Response : ", JSON.stringify(res.data));
+          if (res.data.log) {
+            this.$router.push({
+              name: "logreport",
+              params: { log: res.data.log }
+            });
+          }
+        })
+        .catch(err => {
+          console.log("Error : ", err);
+        });
     }
   }
 };

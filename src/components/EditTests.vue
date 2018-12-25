@@ -52,14 +52,8 @@ import Axios from "axios";
 import FileSaver from "file-saver";
 
 var tests;
-//var step = Store.state.step;
-//var getAndDeleteObj = Store.state.getAndDeleteObj;
-//var postAndPutObj = Store.state.postAndPutObj;
-//var localObj = Store.state.localObj;
-//var checkObj = Store.state.checkObj;
 
 const YAML = require("js-yaml");
-//const JP = require("jsonpath");
 
 export default {
   props: ["ymlPath"],
@@ -78,11 +72,10 @@ export default {
       let doc = YAML.safeLoad(this.$store.state.code);
       doc = this.getValidDoc(doc);
       this.tests = doc;
-    } else {
-      console.log("inside else mounted");
     }
   },
   updated() {
+    this.$store.commit("SET_TESTS", this.tests);
     console.log("latest tests :::: ", JSON.stringify(this.tests));
   },
   methods: {
@@ -151,64 +144,6 @@ export default {
         }
       }
       return tests;
-    },
-    runTests() {
-      let yamlTests = _.cloneDeep(this.tests);
-      yamlTests.steps.filter(step => {
-        delete step.type;
-        return true;
-      });
-      let yamlStr = YAML.safeDump(yamlTests);
-      console.log("yamlStr ::::: ", yamlStr);
-      console.log("Project Name ::::: ", this.$store.state.projectName);
-      console.log("this.tests.tags  :::: ", this.tests.tags);
-      Axios.post(
-        this.$router.options.base +
-          "/api/run_tests?tags=" +
-          this.tests.tags +
-          "&path=" +
-          this.$route.path.split("/edit")[1] +
-          "&projectName=" +
-          this.$store.state.projectName,
-        { yaml: yamlStr }
-      )
-        .then(res => {
-          console.log("Response :::: ", JSON.stringify(res.data));
-          if (res.data.err == undefined) {
-            this.$router.push({
-              name: "logreport",
-              params: { log: res.data.testResponse }
-            });
-          }
-        })
-        .catch(err => {
-          console.log("Error : ", err);
-        });
-    },
-    getLog() {
-      let yamlTests = _.cloneDeep(this.tests);
-      delete yamlTests.iterate;
-      yamlTests.steps.filter(step => {
-        delete step.type;
-        delete step.iterate;
-        return true;
-      });
-      let yamlStr = YAML.safeDump(yamlTests);
-      console.log("Sending this.tests are :::: ", JSON.stringify(yamlTests));
-      console.log(yamlStr);
-
-      Axios.post("/api/getLog", { yaml: yamlStr })
-        .then(res => {
-          console.log("response ::::: ", res);
-          console.log("log report is ::::: ", res);
-          this.$router.push({
-            name: "logreport",
-            params: { log: res.data.testResponse }
-          });
-        })
-        .catch(err => {
-          console.log("Error ::: ", err);
-        });
     }
   }
 };

@@ -62,7 +62,6 @@ function getFilesInfo(relPath, list) {
 
 apiRouter.get("/projects/:projectName", (req, res) => {
   var projectName = req.params.projectName;
-  console.log("projectName ::::: ", projectName);
   mkdirp("projects")
     .then(() => {
       mkdirp("projects/" + projectName);
@@ -131,7 +130,6 @@ apiRouter.get("/projects/:projectName/*", (req, res) => {
         });
       });
   } else if (isExists && isPathAFile) {
-    console.log("actualPath :::: ", actualPath);
     readFile(actualPath)
       .then(content => {
         res.send({
@@ -167,7 +165,6 @@ apiRouter.post("/projects/:projectName/*", (req, res) => {
 });
 
 apiRouter.get("/tests", (req, res) => {
-  console.log("inside /api/tests ");
   readFile(req.query.yamlPath)
     .then(content => {
       res.send(content);
@@ -236,7 +233,6 @@ router.post("/api/getLog", (req, res) => {
       teakozi
         .start("sample")
         .then(content => {
-          console.log("content is ::: ", content);
           res.send({
             msg: "Successfully Executed Test cases with teakozi",
             testResponse: content
@@ -261,7 +257,6 @@ apiRouter.post("/run_tests", (req, res) => {
   var tags = req.query.tags;
   var absPath = req.query.path.substring(1);
   var yaml = req.body.yaml;
-  console.log("absPath :::: ", absPath);
   if (req.body.yaml) {
     writeFile(absPath, yaml)
       .then(() => {
@@ -293,6 +288,50 @@ apiRouter.post("/run_tests", (req, res) => {
       msg: "Entered wrong YAML",
       error: new Error("Entered wrong YAML")
     });
+  }
+});
+
+apiRouter.get("/run_tests", (req, res) => {
+  let projectName = req.query.projectName;
+  let tags = req.query.tags;
+
+  console.log("projectName :::: ", projectName);
+  console.log("tags ::: ", tags);
+
+  if (tags) {
+    teakozi.start("projects/" + projectName, __dirname, {
+        tag: tags
+      })
+      .then(log => {
+        console.log("Response : ", JSON.stringify(log));
+        res.send({
+          msg: "Successfully Executed Test cases with teakozi",
+          log: log
+        });
+      })
+      .catch(err => {
+        console.log("Error : ", err);
+        res.send({
+          msg: "Test case execution failed",
+          error: err
+        });
+      });
+  } else {
+    teakozi.start("projects/" + projectName, __dirname)
+      .then(log => {
+        console.log("Response : ", JSON.stringify(log));
+        res.send({
+          msg: "Successfully Executed Test cases with teakozi",
+          log: log
+        });
+      })
+      .catch(err => {
+        console.log("Error : ", err);
+        res.send({
+          msg: "Test case execution failed",
+          error: err
+        });
+      });
   }
 });
 
