@@ -103,35 +103,26 @@ export default {
       return tests;
     },
     runTests() {
-      let yamlTests = _.cloneDeep(this.tests);
-      yamlTests.steps.filter(step => {
-        delete step.type;
-        return true;
-      });
-      let yamlStr = YAML.safeDump(yamlTests);
-      Axios.post(
+      Axios.get(
         this.$router.options.base +
-          "/api/run_tests?tags=" +
-          this.tests.tags +
-          "&path=" +
-          this.$route.path.split("/edit")[1] +
-          "&projectName=" +
-          this.$store.state.projectName,
-        { yaml: yamlStr }
+          "/api/run_tests?projectName=" +
+          this.$store.state.projectName +
+          "&tags=" +
+          this.tests.tags
       )
         .then(res => {
-          console.log("Response :::: ", JSON.stringify(res.data));
-          if (res.data.err == undefined) {
+          console.log("Response : ", JSON.stringify(res.data));
+          if (res.data.log) {
             this.$router.push({
               name: "logreport",
-              params: { log: res.data.testResponse }
+              params: { log: res.data.log }
             });
           }
         })
         .catch(err => {
           console.log("Error : ", err);
         });
-    }
+    },
   }
 };
 </script>

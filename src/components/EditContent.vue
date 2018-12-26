@@ -75,6 +75,10 @@ export default {
   },
   destroyed() {
     this.$store.commit("SET_IS_FILE_MODE", false);
+    this.$store.commit("SET_TESTS", {
+      name: "",
+      steps: []
+    });
   },
   methods: {
     onCmChange(newCode) {

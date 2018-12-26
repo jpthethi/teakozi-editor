@@ -3,7 +3,7 @@
     router-link.navbar-brand(to="/") Teakozi Editor
     .collapse.navbar-collapse
       ul.navbar-nav.mr-auto
-        li.nav-item
+        //li.nav-item
           router-link.nav-link(to="/tests") Tests
         li.nav-item
           router-link.nav-link(to="/logview") Log View

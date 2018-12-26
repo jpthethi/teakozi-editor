@@ -30,7 +30,7 @@
     .card-body
       .form-group.row
         label.col-sm-2.col-form-label(for='') Name
-        label.col-sm-2.col-form-label(for='') step.name
+        label.col-sm-10.col-form-label(for='') {{step.name}}
       .form-group.row
         .col-sm-2
           select.form-control(v-model='step.type' disabled)
