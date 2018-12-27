@@ -13,12 +13,16 @@
                   li.nav-item
                     a.nav-link.mr-2(href="" title="Tags" @click.prevent="addTags()" :class="tests.tags != undefined?'text-info':''")
                       i.material-icons(style="font-size:1.5em;") local_offer
-                  li.nav-item
+                  //li.nav-item
                     a.nav-link.mr-2(href="" title="Run Test File" @click.prevent="runTests()")
                       i.material-icons(style="font-size:1.5em;") play_arrow
                   li.nav-item
                     a.nav-link.mr-2(href="" title="Download YML File" @click.prevent="downloadYAML()")
                       i.material-icons(style="font-size:1.5em;") file_download
+                  li.nav-item
+                    .file.btn.btn-sm.btn-primary
+                      i.fa.fa-upload(style="font-size: 1em;")
+                      input.input(type="file" @change="onFileUploaded" name="file")
             .card-body
               .form-group.row
                 label.col-sm-2.col-form-label(for='') Name
@@ -170,4 +174,16 @@ $theme-colors: (
   "primary": #d95700
 );
 //@import "../../node_modules/bootstrap/scss/bootstrap";
+
+.file {
+  position: relative;
+  overflow: hidden;
+}
+.input {
+  position: absolute;
+  font-size: 50px;
+  opacity: 0;
+  right: 0;
+  top: 0;
+}
 </style>
