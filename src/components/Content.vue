@@ -16,36 +16,48 @@
         table.table.mb-0
           thead
             nav.navbar.navbar-expand-lg.navbar-light.bg-none.float-right.p-0
-              ul.navbar-nav
-                li.nav-item
-                  a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Edit As Raw File" @click.prevent="$store.commit('SET_EDIT_MODE', 'raw');editFile();")
-                    i.material-icons(style="font-size: 1.5em;") edit
-                li.nav-item
-                  a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Run All Test Files" @click.prevent="runAllTests()")
-                    i.material-icons(style="font-size: 1.5em;") play_circle_filled
+              template(v-if="!$store.state.inLogs")
+                ul.navbar-nav
+                  li.nav-item
+                    a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Edit As Raw File" @click.prevent="$store.commit('SET_EDIT_MODE', 'raw');editFile();")
+                      i.material-icons(style="font-size: 1.5em;") edit
+                  li.nav-item
+                    a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Run All Test Files" @click.prevent="runAllTests()")
+                      i.material-icons(style="font-size: 1.5em;") play_circle_filled
+              template(v-else)
+                ul.navbar-nav
+                  li.nav-item
+                    a.nav-link(href="" id="exPopoverManual1" @click.prevent="showPopup=!showPopup;copyLog();" @blur="showPopup=false;")
+                      i.material-icons(style="font-size: 1.5em;") file_copy
+                    b-popover(target="exPopoverManual1" :show.sync="showPopup" triggers="click") Copied!
           tbody
             tr
               td
-                template(v-if="!$store.state.inTests")
+                template(v-if="$store.state.inTests")
+                  tests(:ymlPath="$route.path.split('/edit/')[1]")
+                template(v-if="$store.state.inLogs")
+                  logReport(:rawLog="code")
+                template(v-else)
                   pre(v-highlightjs="code")
                     code.javascript
-                template(v-else)
-                  tests(:ymlPath="$route.path.split('/edit/')[1]")
 </template>
 
 <script>
 import Axios from "axios";
 import "highlight.js/styles/a11y-light.css";
 import TestsVue from "./Tests";
+import LogReport from "./LogReport";
 export default {
   data() {
     return {
+      showPopup: false,
       isPathAFile: false,
       code: ""
     };
   },
   components: {
-    tests: TestsVue
+    tests: TestsVue,
+    logReport: LogReport
   },
   computed: {
     contents() {
@@ -78,6 +90,14 @@ export default {
   methods: {
     editFile() {
       this.$router.push({ path: "/edit" + this.$route.path });
+    },
+    copyLog(){
+      this.$copyText(this.code)
+      .then((e=>{
+        console.log("Copied");
+      }),(e=>{
+        console.log("Didn't copied");
+      }));
     },
     runAllTests() {
       Axios.get(

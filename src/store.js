@@ -68,7 +68,8 @@ export default new Vuex.Store({
     isFileMode: false,
     editMode: 'raw',
     code: '',
-    inTests: false
+    inTests: false,
+    inLogs: false,
   },
   mutations: {
     testsUpdated(state, tests) {
@@ -93,8 +94,11 @@ export default new Vuex.Store({
 
       if (paths[1] == 'tests') {
         state.inTests = true;
-      } else {
+      } else if(paths[1] == 'logs'){
+        state.inLogs = true;
+      }else {
         state.inTests = false;
+        state.inLogs = false;
       }
     },
     SET_CONTENTS(state, contents) {
@@ -120,6 +124,9 @@ export default new Vuex.Store({
     },
     SET_TESTS(state, tests) {
       state.tests = tests;
+    },
+    SET_IN_LOGS(state, inLogs){
+      state.inLogs = inLogs;
     }
   },
   actions: {
