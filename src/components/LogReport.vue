@@ -58,8 +58,8 @@
                 template(v-if='step.asserts')
                   template(v-for='assert in step.asserts')
                     .row
-                      .col-1.font-weight-bold(:style="assert.valid?{color: 'green'}:{color: 'red'}") {{assert.valid?"Pass":"Failed"}}
-                      .col-11(style="word-break: break-word;")
+                      .col-2.font-weight-bold(:style="assert.valid?{color: 'green'}:{color: 'red'}") {{assert.valid?"Pass":"Failed"}}
+                      .col-10(style="word-break: break-word;")
                         p {{assert.detail}}
 </template>
 

@@ -64,8 +64,6 @@ export default {
       let doc = YAML.safeLoad(this.$store.state.code);
       doc = this.getValidDoc(doc);
       this.tests = doc;
-    } else {
-      console.log("inside mounted else");
     }
   },
   updated() {},
@@ -122,7 +120,7 @@ export default {
         .catch(err => {
           console.log("Error : ", err);
         });
-    },
+    }
   }
 };
 </script>

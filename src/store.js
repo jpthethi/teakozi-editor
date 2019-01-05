@@ -4,16 +4,11 @@ import Axios from 'axios';
 
 Vue.use(Vuex);
 var getAndDeleteObj = {
-  url: "", //required to all
-  //headers: {} // optional to all
+  url: "",
 };
 
 var postAndPutObj = {
-  url: "", //required to all
-  //json: "", //optional to post, not to get
-  //file: "", //optional to post, not to get
-  //override: {}, // optional to post, not to get
-  //headers: {} // optional to all
+  url: "",
 };
 
 var localObj = {
@@ -21,34 +16,18 @@ var localObj = {
 };
 
 var checkObj = {
-  //all are optional
   status: 200,
-  //schema: "",
-  //body: {
-  //eq: {},
-  //neq: {},
-  //null: [],
-  //deepEqual: {},
-  //regex: {}
-  //}
 };
 
 var step = {
-  type: "get", // added for convienience
-  get: getAndDeleteObj, //required
-  name: "", // required
-  //delay: "", //needs to be string
-  //print: [], //optional
-  check: checkObj, //required
-  //collect: {}, //optional
-  //skip_on_error: true //optional
-  //iterate: "" //optional
+  type: "get",
+  get: getAndDeleteObj,
+  name: "",
+  check: checkObj,
 };
 
 var tests = {
   name: "",
-  //tags: "",
-  //iterate: "",
   steps: []
 };
 export default new Vuex.Store({
@@ -94,9 +73,9 @@ export default new Vuex.Store({
 
       if (paths[1] == 'tests') {
         state.inTests = true;
-      } else if(paths[1] == 'logs'){
+      } else if (paths[1] == 'logs') {
         state.inLogs = true;
-      }else {
+      } else {
         state.inTests = false;
         state.inLogs = false;
       }
@@ -125,7 +104,7 @@ export default new Vuex.Store({
     SET_TESTS(state, tests) {
       state.tests = tests;
     },
-    SET_IN_LOGS(state, inLogs){
+    SET_IN_LOGS(state, inLogs) {
       state.inLogs = inLogs;
     }
   },

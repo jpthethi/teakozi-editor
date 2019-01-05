@@ -35,7 +35,7 @@
               td
                 template(v-if="$store.state.inTests")
                   tests(:ymlPath="$route.path.split('/edit/')[1]")
-                template(v-if="$store.state.inLogs")
+                template(v-else-if="$store.state.inLogs")
                   logReport(:rawLog="code")
                 template(v-else)
                   pre(v-highlightjs="code")
