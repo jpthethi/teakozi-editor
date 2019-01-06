@@ -106,14 +106,15 @@ export default {
           "/api/run_tests?projectName=" +
           this.$store.state.projectName +
           "&tags=" +
-          this.tests.tags
+          this.tests.tags +
+          "&shortcode=" +
+          this.$store.state.shortcode
       )
         .then(res => {
-          console.log("Response : ", JSON.stringify(res.data));
           if (res.data.log) {
             this.$router.push({
               name: "logreport",
-              params: { log: res.data.log }
+              params: { rawLog: JSON.stringify(res.data.log) }
             });
           }
         })

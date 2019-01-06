@@ -69,7 +69,8 @@ export default {
   },
   created() {
     this.$store.commit("SET_PATHS", this.$route.path);
-    this.$store.commit("SET_PROJECT_NAME", this.$store.state.paths[0].name);
+    this.$store.commit("SET_PROJECT_NAME", this.$store.state.paths[1].name);
+    this.$store.commit("SET_SHORT_CODE", this.$route.params.shortcode);
     Axios.get(this.$router.options.base + "/api" + this.$route.path)
       .then(res => {
         this.isPathAFile = res.data.isPathAFile;
@@ -91,26 +92,29 @@ export default {
     editFile() {
       this.$router.push({ path: "/edit" + this.$route.path });
     },
-    copyLog(){
-      this.$copyText(this.code)
-      .then((e=>{
-        console.log("Copied");
-      }),(e=>{
-        console.log("Didn't copied");
-      }));
+    copyLog() {
+      this.$copyText(this.code).then(
+        e => {
+          console.log("Copied");
+        },
+        e => {
+          console.log("Didn't copied");
+        }
+      );
     },
     runAllTests() {
       Axios.get(
         this.$router.options.base +
           "/api/run_tests?projectName=" +
-          this.$store.state.projectName
+          this.$store.state.projectName +
+          "&shortcode=" +
+          this.$store.state.shortcode
       )
         .then(res => {
-          console.log("Response : ", JSON.stringify(res.data));
           if (res.data.log) {
             this.$router.push({
               name: "logreport",
-              params: { log: res.data.log }
+              params: { rawLog: JSON.stringify(res.data.log) }
             });
           }
         })

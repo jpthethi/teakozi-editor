@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './components/Home.vue';
-//import Tests from './components/Tests.vue';
 import EditTests from './components/EditTests.vue';
 import Project from './components/Project.vue';
 import LogProvider from './components/LogProvider.vue';
@@ -18,21 +17,21 @@ export default new Router({
   base: "/teakozi",
   routes: [{
     path: "/",
+    //component: Home
+    redirect: "/projects/trial"
+  }, {
+    path: "/projects/:shortcode",
+    name: "projectRouter",
     component: Home
   }, {
-    path: "/tests",
-    component: EditTests,
-    name: "tests",
-    props: true
-  }, {
-    path: "/projects/*",
+    path: "/projects/:shortcode/*",
     component: Project,
     children: [{
       path: '',
       component: Content,
     }]
   }, {
-    path: "/edit/projects/*",
+    path: "/edit/projects/:shortcode/*",
     component: Project,
     children: [{
       path: "",
@@ -45,6 +44,11 @@ export default new Router({
     path: "/logreport",
     name: "logreport",
     component: LogReport,
+    props: true
+  }, {
+    path: "/tests",
+    component: EditTests,
+    name: "tests",
     props: true
   }, {
     path: "*",

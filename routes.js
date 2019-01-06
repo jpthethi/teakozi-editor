@@ -37,14 +37,18 @@ const readDirs = dir => {
   });
 };
 
-apiRouter.get("/projects", (req, res) => {
-  readDirs("projects")
+apiRouter.get("/projects/:sc", (req, res) => {
+  let sc = req.params.sc;
+  readDirs("projects/" + sc)
     .then(list => {
       res.send(list);
     })
     .catch(err => {
       console.log("Error is ::::: ", err);
-      res.send([]);
+      mkdirp("projects/" + sc)
+        .then(() => {
+          res.send([]);
+        });
     });
 });
 
@@ -60,43 +64,36 @@ function getFilesInfo(relPath, list) {
   return response;
 }
 
-apiRouter.get("/projects/:projectName", (req, res) => {
+apiRouter.get("/projects/:sc/:projectName", (req, res) => {
+  var sc = req.params.sc;
   var projectName = req.params.projectName;
-  mkdirp("projects")
+  var scPath = "projects/" + sc + "/";
+  mkdirp(scPath + projectName)
     .then(() => {
-      mkdirp("projects/" + projectName);
+      mkdirp(scPath + projectName + "/config");
     })
     .then(() => {
-      mkdirp("projects/" + projectName + "/config");
-    })
-    .then(() => {
-      if (!fs.existsSync("projects/" + projectName + "/config/index.js"))
+      if (!fs.existsSync(scPath + projectName + "/config/index.js"))
         writeFile(
-          "projects/" + projectName + "/config/index.js",
+          scPath + projectName + "/config/index.js",
           "module.exports={}"
         );
     })
     .then(() => {
-      mkdirp("projects/" + projectName + "/logs");
+      mkdirp(scPath + projectName + "/logs");
     })
     .then(() => {
-      mkdirp("projects/" + projectName + "/models");
+      mkdirp(scPath + projectName + "/models");
     })
     .then(() => {
-      mkdirp("projects/" + projectName + "/payload");
+      mkdirp(scPath + projectName + "/payload");
     })
     .then(() => {
-      mkdirp("projects/" + projectName + "/tests");
+      mkdirp(scPath + projectName + "/tests");
     })
     .then(() => {
       let response = {
-        contents: getFilesInfo("projects/" + projectName, [
-          "config",
-          "logs",
-          "models",
-          "payload",
-          "tests"
-        ]),
+        contents: getFilesInfo(scPath + projectName, ["config", "logs", "models", "payload", "tests"]),
         isPathAFile: false
       };
       res.send(response);
@@ -229,14 +226,16 @@ apiRouter.post("/create_folder_file", (req, res) => {
 
 apiRouter.get("/run_tests", (req, res) => {
   let projectName = req.query.projectName;
+  let sc = req.query.shortcode;
   let tags = req.query.tags;
+  var scPath = "projects/" + sc + "/";
   (() => {
     if (tags) {
-      return teakozi.start("projects/" + projectName, __dirname, {
+      return teakozi.start(scPath + projectName, __dirname, {
         tag: tags
       });
     } else {
-      return teakozi.start("projects/" + projectName, __dirname);
+      return teakozi.start(scPath + projectName, __dirname);
     }
   })()
   .then(log => {

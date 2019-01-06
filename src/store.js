@@ -49,6 +49,7 @@ export default new Vuex.Store({
     code: '',
     inTests: false,
     inLogs: false,
+    shortcode: ""
   },
   mutations: {
     testsUpdated(state, tests) {
@@ -71,9 +72,9 @@ export default new Vuex.Store({
         });
       });
 
-      if (paths[1] == 'tests') {
+      if (paths[2] == 'tests') {
         state.inTests = true;
-      } else if (paths[1] == 'logs') {
+      } else if (paths[2] == 'logs') {
         state.inLogs = true;
       } else {
         state.inTests = false;
@@ -106,6 +107,9 @@ export default new Vuex.Store({
     },
     SET_IN_LOGS(state, inLogs) {
       state.inLogs = inLogs;
+    },
+    SET_SHORT_CODE(state, shortcode) {
+      state.shortcode = shortcode;
     }
   },
   actions: {
