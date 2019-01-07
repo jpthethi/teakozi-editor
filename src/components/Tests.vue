@@ -101,6 +101,7 @@ export default {
       return tests;
     },
     runTests() {
+      this.$store.commit("SET_IS_EXECUTING", true);
       Axios.get(
         this.$router.options.base +
           "/api/run_tests?projectName=" +
@@ -109,6 +110,8 @@ export default {
           this.tests.tags
       )
         .then(res => {
+          this.$store.commit("SET_IS_EXECUTING", false);
+
           if (res.data.log) {
             this.$router.push({
               name: "logreport",
@@ -117,6 +120,7 @@ export default {
           }
         })
         .catch(err => {
+          this.$store.commit("SET_IS_EXECUTING", false);
           console.log("Error : ", err);
         });
     }

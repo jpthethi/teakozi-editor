@@ -49,6 +49,7 @@ export default new Vuex.Store({
     code: '',
     inTests: false,
     inLogs: false,
+    isExecuting: false
   },
   mutations: {
     testsUpdated(state, tests) {
@@ -106,6 +107,9 @@ export default new Vuex.Store({
     },
     SET_IN_LOGS(state, inLogs) {
       state.inLogs = inLogs;
+    },
+    SET_IS_EXECUTING(state, isExecuting){
+      state.isExecuting = isExecuting;
     }
   },
   actions: {
