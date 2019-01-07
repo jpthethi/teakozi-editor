@@ -109,11 +109,10 @@ export default {
           this.tests.tags
       )
         .then(res => {
-          console.log("Response : ", JSON.stringify(res.data));
           if (res.data.log) {
             this.$router.push({
               name: "logreport",
-              params: { log: res.data.log }
+              params: { rawLog: JSON.stringify(res.data.log) }
             });
           }
         })

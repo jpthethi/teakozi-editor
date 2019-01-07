@@ -110,7 +110,7 @@ export default {
           if (res.data.log) {
             this.$router.push({
               name: "logreport",
-              params: { log: res.data.log }
+              params: { rawLog: JSON.stringify(res.data.log) }
             });
           }
         })
