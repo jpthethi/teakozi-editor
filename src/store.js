@@ -49,7 +49,8 @@ export default new Vuex.Store({
     code: '',
     inTests: false,
     inLogs: false,
-    shortcode: ""
+    shortcode: "",
+    isExecuting: false
   },
   mutations: {
     testsUpdated(state, tests) {
@@ -110,6 +111,9 @@ export default new Vuex.Store({
     },
     SET_SHORT_CODE(state, shortcode) {
       state.shortcode = shortcode;
+    },
+    SET_IS_EXECUTING(state, isExecuting){
+      state.isExecuting = isExecuting;
     }
   },
   actions: {

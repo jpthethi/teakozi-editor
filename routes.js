@@ -44,7 +44,6 @@ apiRouter.get("/projects/:sc", (req, res) => {
       res.send(list);
     })
     .catch(err => {
-      console.log("Error is ::::: ", err);
       mkdirp("projects/" + sc)
         .then(() => {
           res.send([]);

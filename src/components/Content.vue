@@ -18,6 +18,8 @@
             nav.navbar.navbar-expand-lg.navbar-light.bg-none.float-right.p-0
               template(v-if="!$store.state.inLogs")
                 ul.navbar-nav
+                  li.nav-item(:class="{'d-none': !$store.state.isExecuting}")
+                    a.btn.btn-info.btn-sm.mr-2.mt-2(href="" @click.prevent="") executing..
                   li.nav-item
                     a.nav-link.mr-2(href="" :to="$router.options.base+'/edit'+$route.path" title="Edit As Raw File" @click.prevent="$store.commit('SET_EDIT_MODE', 'raw');editFile();")
                       i.material-icons(style="font-size: 1.5em;") edit
@@ -103,6 +105,7 @@ export default {
       );
     },
     runAllTests() {
+      this.$store.commit("SET_IS_EXECUTING", true);
       Axios.get(
         this.$router.options.base +
           "/api/run_tests?projectName=" +
@@ -111,6 +114,7 @@ export default {
           this.$store.state.shortcode
       )
         .then(res => {
+          this.$store.commit("SET_IS_EXECUTING", false);
           if (res.data.log) {
             this.$router.push({
               name: "logreport",
@@ -119,6 +123,7 @@ export default {
           }
         })
         .catch(err => {
+          this.$store.commit("SET_IS_EXECUTING", false);
           console.log("Error : ", err);
         });
     }
