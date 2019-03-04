@@ -30,8 +30,6 @@
                                 i.material-icons(style="font-size: 1.5em;") check_circle
                               button.btn.btn-link(type="cancel" @click.prevent="cancelSaveFileOrFolder")
                                 i.material-icons(style="font-size: 1.5em;") cancel
-                        //li.dropdown-item
-                          span Succeed
                     li.nav-item.dropdown
                       a.nav-link.mr-2.dropdown-toggle#createFileDropdown(href="" title="Create File" data-toggler="dropdown" aria-haspopup="true" aria-expanded="false" @click.prevent="showNewFile = !showNewFile; clickedIcon = showNewFile? 'folder':''" :class="clickedIcon == 'folder'? 'text-info': ''")
                         i.material-icons(style="font-size: 1.5em;") create_new_folder
@@ -60,7 +58,6 @@ export default {
   created() {},
   methods: {
     saveFileOrFolder(e) {
-      console.log("this.$route.path ::::: ", this.$route.path);
       let name = e.target.elements.name.value;
       let type = this.clickedIcon;
       Axios.post(

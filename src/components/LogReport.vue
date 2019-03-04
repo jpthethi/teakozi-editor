@@ -84,12 +84,8 @@ export default {
       id: this.$route.params.id
     };
   },
-  created() {
-    console.log("Log sent ::: ", this.log);
-  },
-  mounted() {
-    this.$forceUpdate();
-  },
+  created() {},
+  mounted() {},
   filters: {
     JSONFormat: function(obj) {
       return JSON.stringify(obj);

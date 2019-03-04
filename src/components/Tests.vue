@@ -107,7 +107,9 @@ export default {
           "/api/run_tests?projectName=" +
           this.$store.state.projectName +
           "&tags=" +
-          this.tests.tags
+          this.tests.tags +
+          "&shortcode=" +
+          this.$store.state.shortcode
       )
         .then(res => {
           this.$store.commit("SET_IS_EXECUTING", false);

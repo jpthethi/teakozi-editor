@@ -6,7 +6,7 @@
         //li.nav-item
           router-link.nav-link(to="/tests") Tests
         li.nav-item
-          router-link.nav-link(to="/") Projects
+          router-link.nav-link(:to="'/projects/'+$store.state.shortcode") Projects
         li.nav-item
           router-link.nav-link(to="/logview") Log View
 </template>

@@ -71,7 +71,8 @@ export default {
   },
   created() {
     this.$store.commit("SET_PATHS", this.$route.path);
-    this.$store.commit("SET_PROJECT_NAME", this.$store.state.paths[0].name);
+    this.$store.commit("SET_PROJECT_NAME", this.$store.state.paths[1].name);
+    this.$store.commit("SET_SHORT_CODE", this.$route.params.shortcode);
     Axios.get(this.$router.options.base + "/api" + this.$route.path)
       .then(res => {
         this.isPathAFile = res.data.isPathAFile;
@@ -108,7 +109,9 @@ export default {
       Axios.get(
         this.$router.options.base +
           "/api/run_tests?projectName=" +
-          this.$store.state.projectName
+          this.$store.state.projectName +
+          "&shortcode=" +
+          this.$store.state.shortcode
       )
         .then(res => {
           this.$store.commit("SET_IS_EXECUTING", false);
