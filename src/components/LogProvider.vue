@@ -26,7 +26,7 @@ export default {
       let data = JSON.parse(this.log);
       if(data){
         this.erronous = false;
-        this.$router.push({name: "logreport", params: {log:data}});
+        this.$router.push({name: "logreport", params: {rawLog:this.log}});
       }
     }
   }
